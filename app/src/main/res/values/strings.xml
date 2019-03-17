@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="hello_boot_camp">Hello Boot Camp!</string>
 </resources>
