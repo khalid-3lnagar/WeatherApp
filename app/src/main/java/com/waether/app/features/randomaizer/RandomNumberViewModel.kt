@@ -9,11 +9,11 @@ const val DEFAULT_RANDOM_VALUE = 0
 
 class RandomNumberViewModel : ViewModel() {
 
-    val randomNumberLiveData = MutableLiveData<Int>()
+    val numberLiveData = MutableLiveData<Int>()
     init {
-        randomNumberLiveData.value = DEFAULT_RANDOM_VALUE
+        numberLiveData.value = DEFAULT_RANDOM_VALUE
     }
 
-    fun incrementNumber() = numberIncrement(randomNumberLiveData)
+    fun incrementNumber() = numberIncrement(numberLiveData)
 
 }

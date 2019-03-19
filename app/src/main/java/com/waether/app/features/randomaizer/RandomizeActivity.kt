@@ -14,7 +14,7 @@ class RandomizeActivity : FragmentActivity() {
         setContentView(R.layout.activity_ranomizer)
         val viewModel = ViewModelProviders.of(this).get(RandomNumberViewModel::class.java)
 
-        viewModel.randomNumberLiveData.observe(this, Observer { random_number_txt.text = it.toString() })
+        viewModel.numberLiveData.observe(this, Observer { random_number_txt.text = it.toString() })
 
         incrementBtn.setOnClickListener {
             viewModel.incrementNumber()
