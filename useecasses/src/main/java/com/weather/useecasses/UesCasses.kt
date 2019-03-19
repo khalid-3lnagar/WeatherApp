@@ -1,8 +1,13 @@
 package com.weather.useecasses
 
-import java.util.*
+import android.arch.lifecycle.MutableLiveData
 
 
-fun randomNumberGenerator() = Random().nextInt(1000) + 1
+fun numberIncrement(liveData: MutableLiveData<Int>, incrementValue: Int = 1) =
+    liveData.postValue((liveData.value ?: 0) + incrementValue)
+
+
+
+
 
 
