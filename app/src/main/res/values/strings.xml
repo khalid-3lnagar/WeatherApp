@@ -3,4 +3,5 @@
     <string name="hello_boot_camp">Hello Boot Camp!</string>
     <string name="increment">Increment</string>
     <string name="zero">zero</string>
+    <string name="unclicked">unClicked</string>
 </resources>

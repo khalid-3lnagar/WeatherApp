@@ -8,16 +8,19 @@ import com.waether.app.R
 import kotlinx.android.synthetic.main.activity_ranomizer.*
 
 class RandomizeActivity : FragmentActivity() {
+    private val viewModel by lazy {
+        ViewModelProviders.of(this).get(RandomNumberViewModel::class.java)
+            .apply {
+                numberLiveData.observe(this@RandomizeActivity, Observer { randomNumberTxt.text = it.toString() })
+                clickedState.observe(this@RandomizeActivity, Observer { clickedStateBtn.text = it })
+            }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ranomizer)
-        val viewModel = ViewModelProviders.of(this).get(RandomNumberViewModel::class.java)
-
-        viewModel.numberLiveData.observe(this,
-            Observer { randomNumberTxt.text = it.toString() })
 
         incrementBtn.setOnClickListener { viewModel.incrementNumber() }
-
+        clickedStateBtn.setOnClickListener { viewModel.changeClickedState() }
     }
 }
