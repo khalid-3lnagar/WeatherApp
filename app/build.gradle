@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -35,5 +36,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-core-utils'
     }
+
+    api "android.arch.persistence.room:runtime:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
     api project(':useecasses')
 }
