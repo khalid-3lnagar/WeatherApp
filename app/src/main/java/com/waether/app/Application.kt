@@ -1,5 +1,13 @@
 package com.waether.app
 
 import android.app.Application
+import com.weather.useecasses.Domain
 
-class WeatherApplication : Application()
+
+class WeatherApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        Domain.integrateWith(this)
+
+    }
+}
