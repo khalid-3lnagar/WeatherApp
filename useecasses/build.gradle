@@ -41,6 +41,11 @@ dependencies {
     api 'io.reactivex.rxjava2:rxjava:2.2.6'
 
     kapt "android.arch.persistence.room:compiler:1.1.1"
+    testImplementation 'android.arch.core:core-testing:1.1.1', {
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-core-utils'
+    }
 
     api project(':entties')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

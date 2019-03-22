@@ -3,6 +3,7 @@ package com.weather.useecasses
 import android.arch.lifecycle.MutableLiveData
 import com.weather.entties.City
 import com.weather.useecasses.reposotereys.CitiesRepository
+import com.weather.useecasses.reposotereys.CitiesRepositoryBase
 
 const val DEFAULT_CLICKED_VALUE = "un clicked"
 const val ON_CLICK_CLICKED_VALUE = "clicked"
@@ -18,48 +19,35 @@ fun changeClickedState(liveData: MutableLiveData<String>) {
 
 }
 
-
-// usecase 1 : search city by name
-// if is searching, then do not trigger action
-// city name must not be null
-// if all is OK, trigger search
 fun retrieveCityByName(
-    cityName: String?,
-    retrieving: MutableLiveData<Boolean?>,
-    repository: CitiesRepository?,
+    cityName: String,
+    retrieving: MutableLiveData<Boolean>,
+    repository: CitiesRepositoryBase?,
     result: MutableLiveData<List<City>>
 ) {
     cityName
-        ?.takeUnless { retrieving.value ?: false }
-        ?.takeUnless { it.isBlank() }
+        .takeUnless { retrieving.value ?: false && it.isBlank() }
         ?.also { retrieving.postValue(true) }
-        ?.let { repository?.searchCitiesByName(it) ?: listOf() }
+        ?.let { repository?.retrieveCitiesByName(it) ?: listOf() }
         ?.also(result::postValue)
         ?.also { retrieving.value = false }
 
 }
 
-// usecase 2 : retrieve favorite cities ids (longs)
-// if is retrieving, then do not trigger action
-// if favorites is empty, throw an exception
-// if favorites not empty, convert them to ids (longs)
-
-fun retrieveFavoriteCitiesByIds(
+fun retrieveFavoriteCitiesIds(
     retrieving: MutableLiveData<Boolean?>,
     repository: CitiesRepository?
 ): List<Long> {
     return retrieving
         .takeUnless { it.value ?: false }
         ?.also { it.postValue(true) }
-        ?.let { repository?.retrieveFavoritesCitiesIds()!! }
+        ?.let { repository?.retrieveFavoritesCitiesIds() }
+        .takeUnless { it!!.isEmpty() }
         ?.map { it.id }
         ?.also { retrieving.postValue(false) }!!
 
 }
 
-// usecase 3 : retrieve cities by Ids
-// if is retrieving, then do not trigger action
-// if all is Ok, trigger action
 fun retrieveCitiesByIds(
     ids: List<Long>,
     retrieving: MutableLiveData<Boolean?>,
