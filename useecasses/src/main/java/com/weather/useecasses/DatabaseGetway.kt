@@ -19,14 +19,6 @@ abstract class WeatherDatabase : RoomDatabase() {
     abstract val favoritesDao: FavoritesDao
 }
 
-class CoordinatesTypeConverter {
-    @TypeConverter
-    fun toJson(coordinates: Coordinates) = Gson().toJson(coordinates)
-
-    @TypeConverter
-    fun fromJson(jsonCoordinates: String) = Gson().fromJson(jsonCoordinates, Coordinates::class.java)
-}
-
 @Dao
 interface FavoritesDao {
 
@@ -38,6 +30,7 @@ interface FavoritesDao {
 
     @Delete
     fun delete(id: FavoriteCityId)
+
 }
 
 @Dao
@@ -51,6 +44,15 @@ interface CitiesDao {
 
     @Query("select * from City where City.id in (:ids)")
     fun queryCitiesByIds(ids: List<Long>): List<City>
+
+}
+
+class CoordinatesTypeConverter {
+    @TypeConverter
+    fun toJson(coordinates: Coordinates) = Gson().toJson(coordinates)
+
+    @TypeConverter
+    fun fromJson(jsonCoordinates: String) = Gson().fromJson(jsonCoordinates, Coordinates::class.java)
 }
 
 //DatabaseInitializers
@@ -80,9 +82,8 @@ private fun copyByteArray(databaseFile: File, assetsInputStream: InputStream) {
         .use { it.write(byteArray(assetsInputStream)) }
 }
 
-private fun byteArray(assetsFileInputStream: InputStream) =
-    ByteArray(assetsFileInputStream.available())
-        .also { assetsFileInputStream.read(it) }
+private fun byteArray(assetsFileInputStream: InputStream) = ByteArray(assetsFileInputStream.available())
+    .also { assetsFileInputStream.read(it) }
 
 private fun buildDatabase(context: Context) =
     Room.databaseBuilder(context, WeatherDatabase::class.java, DATABASE_NAME).build()
