@@ -20,31 +20,38 @@ fun changeClickedState(liveData: MutableLiveData<String>) {
 }
 
 fun retrieveCityByName(
-    cityName: String,
+    cityName: String?,
     retrieving: MutableLiveData<Boolean>,
-    repository: CitiesRepositoryBase?,
+    repository: CitiesRepositoryBase,
     result: MutableLiveData<List<City>>
 ) {
     cityName
-        .takeUnless { retrieving.value ?: false && it.isBlank() }
+        ?.takeUnless { retrieving.value ?: false }
+        ?.takeUnless { it.isBlank() }
         ?.also { retrieving.postValue(true) }
-        ?.let { repository?.retrieveCitiesByName(it) ?: listOf() }
+        ?.let { repository.retrieveCitiesByName(it) }
         ?.also(result::postValue)
         ?.also { retrieving.value = false }
-
+/*searchName
+        ?.takeUnless { retrieving.value ?: false }
+        ?.takeUnless { it.isBlank() }
+        ?.also { retrieving.postValue(true) }
+        ?.let { repository.searchCitiesByName(it) }
+        ?.also { result.postValue(it) }
+        ?.also { retrieving.postValue(false) }
+*/
 }
-
 fun retrieveFavoriteCitiesIds(
-    retrieving: MutableLiveData<Boolean?>,
-    repository: CitiesRepository?
-): List<Long> {
+    retrieving: MutableLiveData<Boolean>,
+    repository: CitiesRepositoryBase
+): List<Long>? {
     return retrieving
         .takeUnless { it.value ?: false }
         ?.also { it.postValue(true) }
-        ?.let { repository?.retrieveFavoritesCitiesIds() }
-        .takeUnless { it!!.isEmpty() }
+        ?.let { repository.retrieveFavoritesCitiesIds() }
+        ?.ifEmpty { throw Exception() }
         ?.map { it.id }
-        ?.also { retrieving.postValue(false) }!!
+        ?.also { retrieving.postValue(false) }
 
 }
 
@@ -56,7 +63,7 @@ fun retrieveCitiesByIds(
 ) {
     ids.takeUnless { retrieving.value ?: false && ids.isEmpty() }
         ?.also { retrieving.postValue(true) }
-        ?.let { repository?.retrieveCitiesIds(it)!! }
+        ?.let { repository?.retrieveCitiesByIds(it)!! }
         ?.also { result.postValue(it) }
         ?.also { retrieving.postValue(false) }
 }

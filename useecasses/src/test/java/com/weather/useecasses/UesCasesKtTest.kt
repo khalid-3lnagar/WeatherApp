@@ -10,63 +10,116 @@ import org.junit.Rule
 import org.junit.Test
 
 class UesCasesKtTest {
-    private val retrieving by lazy { MutableLiveData<Boolean>() }
-    private val result by lazy { MutableLiveData<List<City>>() }
-    private val repositoryMock by lazy { RepositoryMock() }
+
     @JvmField
     @Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    // use case 1 : search city by name
+
+    /** use case 1 : search city by name */
+
     // if is searching, then do not trigger action
-    // city name must not be null
-    // if all is OK, trigger search
     @Test
     fun `on searchCitiesByName when retrieving is true then do nothing`() {
         //Arrange
         val name = "Cairo"
+        val retrieving = MutableLiveData<Boolean>()
+        val repositoryMock = RepositoryMock()
+        val result = MutableLiveData<List<City>>()
         retrieving.postValue(true)
         //Act
         retrieveCityByName(name, retrieving, repositoryMock, result)
-
         //Assert
-
-        Assert.assertTrue(result.value!!.isEmpty())
+        Assert.assertTrue(result.value == null)
     }
 
+    // city name must not be null
     @Test
     fun `on searchCitiesByName when cityName is blank and not retrieving then do nothing`() {
         //Arrange
         val name = "    "
+        val retrieving = MutableLiveData<Boolean>()
+        val repositoryMock = RepositoryMock()
+        val result = MutableLiveData<List<City>>()
         retrieving.postValue(false)
-        result.postValue(emptyList())
-
         //Act
         retrieveCityByName(name, retrieving, repositoryMock, result)
-
         //Assert
-        Assert.assertTrue(result.value!!.isEmpty())
+        Assert.assertTrue(result.value == null)
     }
 
+    // if all is OK, trigger search
     @Test
     fun `on searchCitiesByName when is not retrieving and cityName in repository then return all Cities that cityName in it`() {
         //Arrange
         val name = "cairo"
+        val retrieving = MutableLiveData<Boolean>()
+        val repositoryMock = RepositoryMock()
+        val result = MutableLiveData<List<City>>()
         retrieving.postValue(false)
         //Act
         retrieveCityByName(name, retrieving, repositoryMock, result)
         //test result
         // result.value!!.forEach(::println)
         //Assert
-        Assert.assertTrue(result.value!!.isNotEmpty())
+
+        Assert.assertTrue(result.value != null)
     }
 
-    // usecase 2 : retrieve favorite cities ids (longs)
+    /**
+     *  usecase 2 : retrieve favorite cities ids (longs)
+     *  */
     // if is retrieving, then do not trigger action
-    // if favorites is empty, throw an exception
-    // if favorites not empty, convert them to ids (longs)
+    @Test
+    fun `on retrieveFavoritesCitiesIds when retrieving is true do nothing`() {
+        //Arrange
 
-    // usecase 3 : retrieve cities by Ids
+        val retrieving = MutableLiveData<Boolean>()
+        val repositoryMock = RepositoryMock()
+        retrieving.postValue(true)
+        //Act
+        val result = retrieveFavoriteCitiesIds(retrieving, repositoryMock)
+        Assert.assertTrue(result == null)
+
+
+    }
+    // if favorites is empty, throw an exception
+    @Test
+    fun `on retrieveCitiesByIds when FavoriteCitiesIds is empty, throw an exception`() {
+        //Arrange
+        val repositoryMock = RepositoryMock()
+        val retrieving = MutableLiveData<Boolean>()
+        repositoryMock.favoriteCityIdsDataSource.clear()
+        try {
+            //Act
+            retrieveFavoriteCitiesIds(retrieving, repositoryMock)
+            Assert.fail("Should have thrown Exception")
+        } catch (e: Exception) {
+            //Assert
+            Assert.assertTrue(true)
+
+        }
+
+    }
+
+    //retrieve favorite cities ids (longs)
+    @Test
+    fun `on retrieveCitiesByIds when  retrieving is false and FavoriteCitiesIds is not Empty then get FavoriteCitiesIds `() {
+        //Arrange
+        val repositoryMock = RepositoryMock()
+        val retrieving = MutableLiveData<Boolean>()
+        //Act
+        val result = retrieveFavoriteCitiesIds(retrieving, repositoryMock)
+
+        //Assert
+        Assert.assertTrue(result != null)
+
+    }
+
+    /**
+     * usecase 3 : retrieve cities by Ids
+     * */
+
     // if is retrieving, then do not trigger action
     // if all is Ok, trigger action
 
@@ -82,10 +135,12 @@ class RepositoryMock : CitiesRepositoryBase {
                 add(City(3, "Alexandria", "egypt", coordinates = null))
             }
     }
-    private val favoriteCityIdsDataSource by lazy {
+    val favoriteCityIdsDataSource by lazy {
         mutableListOf<FavoriteCityId>()
-            .also { it.add(FavoriteCityId(1)) }
-            .also { it.add(FavoriteCityId(2)) }
+            .apply {
+                add(FavoriteCityId(1))
+                add(FavoriteCityId(2))
+            }
     }
 
     private fun <T> MutableList<T>.listIf(block: (field: T) -> Boolean): MutableList<T> {
@@ -97,7 +152,7 @@ class RepositoryMock : CitiesRepositoryBase {
 
     override fun retrieveCitiesByName(name: String): List<City> = citiesDataSource.listIf { it.name!!.contains(name) }
 
-    override fun retrieveCitiesIds(cityIds: List<Long>): List<City> = citiesDataSource.listIf { it.id in cityIds }
+    override fun retrieveCitiesByIds(cityIds: List<Long>): List<City> = citiesDataSource.listIf { it.id in cityIds }
 
     override fun retrieveFavoritesCitiesIds(): List<FavoriteCityId> = favoriteCityIdsDataSource
 

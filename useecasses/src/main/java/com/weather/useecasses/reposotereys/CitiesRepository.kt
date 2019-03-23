@@ -8,7 +8,7 @@ import com.weather.useecasses.weatherDatabase
 class CitiesRepository(private val database: Lazy<WeatherDatabase> = lazy { weatherDatabase }) : CitiesRepositoryBase {
     override fun retrieveCitiesByName(name: String): List<City> = database.value.citiesDao.queryCitiesByName(name)
 
-    override fun retrieveCitiesIds(cityIds: List<Long>) = database.value.citiesDao.queryCitiesByIds(cityIds)
+    override fun retrieveCitiesByIds(cityIds: List<Long>) = database.value.citiesDao.queryCitiesByIds(cityIds)
 
     override fun retrieveFavoritesCitiesIds() = database.value.favoritesDao.queryAll()
 
@@ -22,7 +22,7 @@ interface CitiesRepositoryBase {
 
     fun retrieveCitiesByName(name: String): List<City>
 
-    fun retrieveCitiesIds(cityIds: List<Long>): List<City>
+    fun retrieveCitiesByIds(cityIds: List<Long>): List<City>
 
     fun retrieveFavoritesCitiesIds(): List<FavoriteCityId>
 
