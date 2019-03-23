@@ -2,7 +2,7 @@ package com.weather.useecasses
 
 import android.arch.lifecycle.MutableLiveData
 import com.weather.entties.City
-import com.weather.useecasses.reposotereys.CitiesRepository
+import com.weather.entties.FavoriteCityId
 import com.weather.useecasses.reposotereys.CitiesRepositoryBase
 
 const val DEFAULT_CLICKED_VALUE = "un clicked"
@@ -44,26 +44,28 @@ fun retrieveCityByName(
 fun retrieveFavoriteCitiesIds(
     retrieving: MutableLiveData<Boolean>,
     repository: CitiesRepositoryBase
-): List<Long>? {
+): List<FavoriteCityId>? {
     return retrieving
         .takeUnless { it.value ?: false }
         ?.also { it.postValue(true) }
         ?.let { repository.retrieveFavoritesCitiesIds() }
         ?.ifEmpty { throw Exception() }
-        ?.map { it.id }
+        ?.map { it }
         ?.also { retrieving.postValue(false) }
 
 }
 
 fun retrieveCitiesByIds(
-    ids: List<Long>,
-    retrieving: MutableLiveData<Boolean?>,
-    repository: CitiesRepository?,
+    ids: List<FavoriteCityId>,
+    retrieving: MutableLiveData<Boolean>,
+    repository: CitiesRepositoryBase,
     result: MutableLiveData<List<City>>
 ) {
-    ids.takeUnless { retrieving.value ?: false && ids.isEmpty() }
+    ids.takeUnless { retrieving.value ?: false }
+        .takeUnless { ids.isEmpty() }
         ?.also { retrieving.postValue(true) }
-        ?.let { repository?.retrieveCitiesByIds(it)!! }
+        ?.map { it.id }
+        ?.let { repository.retrieveCitiesByIds(it) }
         ?.also { result.postValue(it) }
         ?.also { retrieving.postValue(false) }
 }
