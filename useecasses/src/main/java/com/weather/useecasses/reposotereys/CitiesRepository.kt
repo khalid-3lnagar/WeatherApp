@@ -5,7 +5,8 @@ import com.weather.entties.FavoriteCityId
 import com.weather.useecasses.WeatherDatabase
 import com.weather.useecasses.weatherDatabase
 
-class CitiesRepository(private val database: Lazy<WeatherDatabase> = lazy { weatherDatabase }) : CitiesRepositoryBase {
+class CitiesRepositoryImplemnter(private val database: Lazy<WeatherDatabase> = lazy { weatherDatabase }) :
+    CitiesRepository {
     override fun retrieveCitiesByName(name: String): List<City> = database.value.citiesDao.queryCitiesByName(name)
 
     override fun retrieveCitiesByIds(cityIds: List<Long>) = database.value.citiesDao.queryCitiesByIds(cityIds)
@@ -18,7 +19,7 @@ class CitiesRepository(private val database: Lazy<WeatherDatabase> = lazy { weat
 
 }
 
-interface CitiesRepositoryBase {
+interface CitiesRepository {
 
     fun retrieveCitiesByName(name: String): List<City>
 

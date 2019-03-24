@@ -3,8 +3,9 @@ package com.weather.useecasses
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.MutableLiveData
 import com.weather.entties.City
+import com.weather.entties.EmptyFavoritesCities
 import com.weather.entties.FavoriteCityId
-import com.weather.useecasses.reposotereys.CitiesRepositoryBase
+import com.weather.useecasses.reposotereys.CitiesRepository
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
@@ -15,8 +16,27 @@ class UesCasesKtTest {
     @Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-
     /** use case 1 : search city by name */
+
+    // if all is OK, trigger search
+    @Test
+    fun `retrieveCityByName with retrieving is false then return all Cities that matches`() {
+        //Arrange
+        val name = "cairo"
+        val retrieving = MutableLiveData<Boolean>()
+        val repositoryMock = RepositoryMock()
+        val result = MutableLiveData<List<City>>()
+        retrieving.postValue(false)
+
+        //Act
+        retrieveCityByName(name, retrieving, repositoryMock, result)
+        //test result
+        // result.value!!.forEach(::println)
+        //Assert
+
+        Assert.assertTrue(result.value!!.isNotEmpty())
+    }
+
 
     // if is searching, then do not trigger action
     @Test
@@ -48,24 +68,6 @@ class UesCasesKtTest {
         Assert.assertTrue(result.value == null)
     }
 
-    // if all is OK, trigger search
-    @Test
-    fun `retrieveCityByName with retrieving is false then return all Cities that matches`() {
-        //Arrange
-        val name = "cairo"
-        val retrieving = MutableLiveData<Boolean>()
-        val repositoryMock = RepositoryMock()
-        val result = MutableLiveData<List<City>>()
-        retrieving.postValue(false)
-        //Act
-        retrieveCityByName(name, retrieving, repositoryMock, result)
-        //test result
-        // result.value!!.forEach(::println)
-        //Assert
-
-        Assert.assertTrue(result.value != null)
-    }
-
     /**use case 2 : retrieve favorite cities ids (longs) */
 
     // if is retrieving, then do not trigger action
@@ -84,21 +86,15 @@ class UesCasesKtTest {
     }
 
     // if favorites is empty, throw an exception
-    @Test
+    @Test(expected = EmptyFavoritesCities::class)
     fun `retrieveFavoriteCitiesIds with empty ids then throw an exception`() {
         //Arrange
         val repositoryMock = RepositoryMock()
         val retrieving = MutableLiveData<Boolean>()
         repositoryMock.favoriteCityIdsDataSource.clear()
-        try {
-            //Act
-            retrieveFavoriteCitiesIds(retrieving, repositoryMock)
-            Assert.fail("Should have thrown Exception")
-        } catch (e: Exception) {
-            //Assert
-            Assert.assertTrue(true)
 
-        }
+        //Act
+        retrieveFavoriteCitiesIds(retrieving, repositoryMock)
 
     }
 
@@ -155,35 +151,34 @@ class UesCasesKtTest {
 
 }
 
-class RepositoryMock : CitiesRepositoryBase {
+class RepositoryMock : CitiesRepository {
     private val citiesDataSource by lazy {
-        mutableListOf<City>()
-            .apply {
-                add(City(1, "cairo", "egypt", coordinates = null))
-                add(City(2, "Shobra cairo ", "egypt", coordinates = null))
-                add(City(3, "Alexandria", "egypt", coordinates = null))
-            }
+        mutableListOf<City>(
+            City(1, "cairo", "egypt", coordinates = null),
+            City(2, "Shobra cairo ", "egypt", coordinates = null),
+            City(3, "Alexandria", "egypt", coordinates = null)
+        )
+
+
     }
     val favoriteCityIdsDataSource by lazy {
-        mutableListOf<FavoriteCityId>()
-            .apply {
-                add(FavoriteCityId(1))
-                add(FavoriteCityId(2))
-            }
+        mutableListOf<FavoriteCityId>(FavoriteCityId(1), FavoriteCityId(2))
     }
 
-    private fun <T> MutableList<T>.listIf(block: (field: T) -> Boolean): MutableList<T> {
-        val list = mutableListOf<T>()
-        forEach { if (block(it)) list.add(it) }
-        return list
 
-    }
+    override fun retrieveCitiesByName(name: String): List<City> = citiesDataSource.filter { it.name!!.contains(name) }
 
-    override fun retrieveCitiesByName(name: String): List<City> = citiesDataSource.listIf { it.name!!.contains(name) }
-
-    override fun retrieveCitiesByIds(cityIds: List<Long>): List<City> = citiesDataSource.listIf { it.id in cityIds }
+    override fun retrieveCitiesByIds(cityIds: List<Long>): List<City> = citiesDataSource.filter { it.id in cityIds }
 
     override fun retrieveFavoritesCitiesIds(): List<FavoriteCityId> = favoriteCityIdsDataSource
 
 
 }
+
+/*
+fun <T> MutableList<T>.listIf(block: (field: T) -> Boolean): MutableList<T> {
+    val list = mutableListOf<T>()
+    forEach { if (block(it)) list.add(it) }
+    return list
+
+}*/

@@ -2,8 +2,9 @@ package com.weather.useecasses
 
 import android.arch.lifecycle.MutableLiveData
 import com.weather.entties.City
+import com.weather.entties.EmptyFavoritesCities
 import com.weather.entties.FavoriteCityId
-import com.weather.useecasses.reposotereys.CitiesRepositoryBase
+import com.weather.useecasses.reposotereys.CitiesRepository
 
 const val DEFAULT_CLICKED_VALUE = "un clicked"
 const val ON_CLICK_CLICKED_VALUE = "clicked"
@@ -22,7 +23,7 @@ fun changeClickedState(liveData: MutableLiveData<String>) {
 fun retrieveCityByName(
     cityName: String?,
     retrieving: MutableLiveData<Boolean>,
-    repository: CitiesRepositoryBase,
+    repository: CitiesRepository,
     result: MutableLiveData<List<City>>
 ) {
     cityName
@@ -32,25 +33,17 @@ fun retrieveCityByName(
         ?.let { repository.retrieveCitiesByName(it) }
         ?.also(result::postValue)
         ?.also { retrieving.value = false }
-/*searchName
-        ?.takeUnless { retrieving.value ?: false }
-        ?.takeUnless { it.isBlank() }
-        ?.also { retrieving.postValue(true) }
-        ?.let { repository.searchCitiesByName(it) }
-        ?.also { result.postValue(it) }
-        ?.also { retrieving.postValue(false) }
-*/
+
 }
 fun retrieveFavoriteCitiesIds(
     retrieving: MutableLiveData<Boolean>,
-    repository: CitiesRepositoryBase
+    repository: CitiesRepository
 ): List<FavoriteCityId>? {
     return retrieving
         .takeUnless { it.value ?: false }
         ?.also { it.postValue(true) }
         ?.let { repository.retrieveFavoritesCitiesIds() }
-        ?.ifEmpty { throw Exception() }
-        ?.map { it }
+        ?.ifEmpty { throw EmptyFavoritesCities() }
         ?.also { retrieving.postValue(false) }
 
 }
@@ -58,7 +51,7 @@ fun retrieveFavoriteCitiesIds(
 fun retrieveCitiesByIds(
     ids: List<FavoriteCityId>,
     retrieving: MutableLiveData<Boolean>,
-    repository: CitiesRepositoryBase,
+    repository: CitiesRepository,
     result: MutableLiveData<List<City>>
 ) {
     ids.takeUnless { retrieving.value ?: false }
