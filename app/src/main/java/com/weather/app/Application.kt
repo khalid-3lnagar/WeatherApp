@@ -1,4 +1,4 @@
-package com.waether.app
+package com.weather.app
 
 import android.app.Application
 import com.weather.useecasses.Domain

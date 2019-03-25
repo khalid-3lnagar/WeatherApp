@@ -19,33 +19,39 @@ fun changeClickedState(liveData: MutableLiveData<String>) {
         liveData.postValue(DEFAULT_CLICKED_VALUE)
 
 }
+typealias CitiesResult = MutableLiveData<List<City>>
 
-fun retrieveCityByName(
-    cityName: String?,
-    retrieving: MutableLiveData<Boolean>,
-    repository: CitiesRepository,
-    result: MutableLiveData<List<City>>
+class RetrieveCityByName(
+    private val retrieving: MutableLiveData<Boolean>,
+    private val repository: CitiesRepository,
+    private val result: CitiesResult
 ) {
-    cityName
-        ?.takeUnless { retrieving.value ?: false }
-        ?.takeUnless { it.isBlank() }
-        ?.also { retrieving.postValue(true) }
-        ?.let { repository.retrieveCitiesByName(it) }
-        ?.also(result::postValue)
-        ?.also { retrieving.value = false }
+    operator fun invoke(cityName: String?) {
+        cityName
+            ?.takeUnless { retrieving.value ?: false }
+            ?.takeUnless { it.isBlank() }
+            ?.also { retrieving.postValue(true) }
+            ?.let { repository.retrieveCitiesByName(it) }
+            ?.also(result::postValue)
+            ?.also { retrieving.postValue(false) }
+    }
 
 }
-fun retrieveFavoriteCitiesIds(
-    retrieving: MutableLiveData<Boolean>,
-    repository: CitiesRepository
-): List<FavoriteCityId>? {
-    return retrieving
+
+class RetrieveFavoriteCitiesIds(
+    private val retrieving: MutableLiveData<Boolean>,
+    private val repository: CitiesRepository
+) {
+    operator fun invoke(result: MutableLiveData<List<FavoriteCityId>>) {
+        retrieving
         .takeUnless { it.value ?: false }
         ?.also { it.postValue(true) }
         ?.let { repository.retrieveFavoritesCitiesIds() }
         ?.ifEmpty { throw EmptyFavoritesCities() }
+            ?.also { result.postValue(it) }
         ?.also { retrieving.postValue(false) }
 
+    }
 }
 
 fun retrieveCitiesByIds(

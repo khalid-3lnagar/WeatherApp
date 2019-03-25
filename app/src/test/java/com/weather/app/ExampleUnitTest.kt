@@ -1,4 +1,4 @@
-package com.waether.app
+package com.weather.app
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

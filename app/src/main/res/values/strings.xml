@@ -4,4 +4,11 @@
     <string name="increment">Increment</string>
     <string name="zero">zero</string>
     <string name="unclicked">unClicked</string>
+    <string name="search">Search</string>
+    <string name="city_name">City Name</string>
+    <string name="favorite_cities">Favorite Cities</string>
+    <string name="country">country</string>
+    <string name="longitude">Longitude</string>
+    <string name="latitude">Latitude</string>
+
 </resources>

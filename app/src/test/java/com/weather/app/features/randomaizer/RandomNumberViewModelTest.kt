@@ -1,4 +1,4 @@
-package com.waether.app.features.randomaizer
+package com.weather.app.features.randomaizer
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.weather.useecasses.DEFAULT_CLICKED_VALUE

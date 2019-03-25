@@ -1,4 +1,4 @@
-package com.waether.app.features.randomaizer
+package com.weather.app.features.randomaizer
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
