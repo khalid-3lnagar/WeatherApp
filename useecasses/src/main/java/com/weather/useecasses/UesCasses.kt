@@ -5,6 +5,7 @@ import com.weather.entties.City
 import com.weather.entties.EmptyFavoritesCities
 import com.weather.entties.FavoriteCityId
 import com.weather.useecasses.reposotereys.CitiesRepository
+import com.weather.useecasses.reposotereys.CitiesRepositoryImplementer
 
 const val DEFAULT_CLICKED_VALUE = "un clicked"
 const val ON_CLICK_CLICKED_VALUE = "clicked"
@@ -23,8 +24,8 @@ typealias CitiesResult = MutableLiveData<List<City>>
 
 class RetrieveCityByName(
     private val retrieving: MutableLiveData<Boolean>,
-    private val repository: CitiesRepository,
-    private val result: CitiesResult
+    private val result: CitiesResult,
+    private val repository: CitiesRepository = CitiesRepositoryImplementer()
 ) {
     operator fun invoke(cityName: String?) {
         cityName

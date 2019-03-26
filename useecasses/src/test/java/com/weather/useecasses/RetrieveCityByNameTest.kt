@@ -24,7 +24,7 @@ class RetrieveCityByNameTest {
         val result = MutableLiveData<List<City>>()
         retrieving.postValue(false)
 
-        val retrieveCityByNameTest = RetrieveCityByName(retrieving, repositoryMock, result)
+        val retrieveCityByNameTest = RetrieveCityByName(retrieving, result, repositoryMock)
 
         //Act
         retrieveCityByNameTest(name)
@@ -46,7 +46,7 @@ class RetrieveCityByNameTest {
         val result = MutableLiveData<List<City>>()
         retrieving.postValue(true)
 
-        val retrieveCityByNameTest = RetrieveCityByName(retrieving, repositoryMock, result)
+        val retrieveCityByNameTest = RetrieveCityByName(retrieving, result, repositoryMock)
 
         //Act
         retrieveCityByNameTest(name)
@@ -65,7 +65,7 @@ class RetrieveCityByNameTest {
         val result = MutableLiveData<List<City>>()
         retrieving.postValue(false)
 
-        val retrieveCityByNameTest = RetrieveCityByName(retrieving, repositoryMock, result)
+        val retrieveCityByNameTest = RetrieveCityByName(retrieving, result, repositoryMock)
 
         //Act
         retrieveCityByNameTest(name)

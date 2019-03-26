@@ -6,21 +6,20 @@ import com.weather.entties.City
 import com.weather.useecasses.CitiesResult
 import com.weather.useecasses.RetrieveCityByName
 import com.weather.useecasses.engine.toMutableLiveData
-import com.weather.useecasses.reposotereys.CitiesRepository
-import com.weather.useecasses.reposotereys.CitiesRepositoryImplemnter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import java.io.Serializable
 
 class HomeViewModel(
     val retrieving: MutableLiveData<Boolean> = false.toMutableLiveData(),
-    val citiesResult: CitiesResult = ArrayList<City>().toMutableLiveData(),
-    private val repository: CitiesRepository = CitiesRepositoryImplemnter()
+    val citiesResult: CitiesResult = ArrayList<City>().toMutableLiveData()
 ) : ViewModel() {
     private val disposables = CompositeDisposable()
-
-    val retrieveCityByName = RetrieveCityByName(retrieving, repository, citiesResult)
+    val showCity: PublishSubject<Serializable> = PublishSubject.create()
+    val retrieveCityByName = RetrieveCityByName(retrieving, citiesResult)
     fun onSearchButtonClicked(cityName: String?) {
 
         Observable.fromCallable { retrieveCityByName(cityName) }
@@ -33,7 +32,9 @@ class HomeViewModel(
 
     override fun onCleared() {
         super.onCleared()
+        showCity.onComplete()
         disposables.dispose()
+
     }
 
 }

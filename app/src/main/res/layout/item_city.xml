@@ -45,8 +45,8 @@
 
         <TextView
             android:id="@+id/city_country_txt"
-            android:layout_width="72dp"
-            android:layout_height="22dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
@@ -61,9 +61,8 @@
             android:id="@+id/city_latitude_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
 
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:textColor="#000"
             app:layout_constraintBottom_toTopOf="@+id/city_longitude_txt"
             app:layout_constraintEnd_toEndOf="@+id/city_longitude_txt"
@@ -75,9 +74,8 @@
 
         <TextView
             android:id="@+id/city_latitude_txt2"
-            android:layout_width="55dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="@string/latitude"
             app:layout_constraintBottom_toTopOf="@+id/city_longitude_txt"
@@ -91,14 +89,14 @@
 
         <TextView
             android:id="@+id/city_longitude_txt"
-            android:layout_width="69dp"
-            android:layout_height="17dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:textColor="#000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/show_city"
+            app:layout_constraintHorizontal_bias="0.11"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
@@ -109,9 +107,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:text="@string/longitude"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline"

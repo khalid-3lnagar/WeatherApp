@@ -10,15 +10,25 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
 import com.weather.app.R
-import com.weather.entties.City
+import com.weather.app.features.forecast.ForecastActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_home.*
+import java.io.Serializable
+import java.util.concurrent.TimeUnit
 
 class HomeScreen : AppCompatActivity() {
-
+    private val disposables = CompositeDisposable()
     private val viewModel by lazy { ViewModelProviders.of(this).get(HomeViewModel::class.java) }
-    private val showCityBroadcastReceiver by lazy { ShowCityBroadCastReceiver() }
+
+    private val showCityBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.showCity.onNext(intent?.getSerializableExtra(INTENT_EXTRA_CITY)!!)
+        }
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,28 +40,28 @@ class HomeScreen : AppCompatActivity() {
         home_recyclerView.layoutManager = LinearLayoutManager(this)
         home_recyclerView.adapter = HomeAdapter(viewModel.citiesResult, this)
 
-
         search_button.setOnClickListener { viewModel.onSearchButtonClicked(searchEditText.text.toString()) }
+
+        viewModel.showCity
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { startForeCast(it) }
+            .also { disposables.add(it) }
+
         registerReceiver(showCityBroadcastReceiver, IntentFilter(BROADCAST_ACTION_SHOW_CITY))
+    }
+
+    private fun startForeCast(it: Serializable?) {
+        Intent(this@HomeScreen, ForecastActivity::class.java)
+            .apply { putExtra(INTENT_EXTRA_CITY, it) }
+            .also { startActivity(it) }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(showCityBroadcastReceiver)
+        disposables.dispose()
     }
-    private fun resultObserver(): Observer<List<City>> {
-        return Observer {
-        }
-    }
-}
 
-class ShowCityBroadCastReceiver : BroadcastReceiver() {
-    override fun onReceive(p0: Context?, p1: Intent?) {
-        val cityId = p1
-            ?.getSerializableExtra(INTENT_EXTRA_CITY)
-            ?.let { it as City }
-            ?.id ?: 0L
-        Toast.makeText(p0, "$  first broadcast from $cityId ", Toast.LENGTH_SHORT).show()
-    }
 
 }
