@@ -8,7 +8,8 @@
     <string name="city_name">City Name</string>
     <string name="favorite_cities">Favorite Cities</string>
     <string name="country">country</string>
-    <string name="longitude">Longitude</string>
-    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude: </string>
+    <string name="latitude">Latitude: </string>
+    <string name="show_city">Show</string>
 
 </resources>
