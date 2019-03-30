@@ -1,7 +1,7 @@
 package com.weather.useecasses
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
-import com.weather.entties.EmptyFavoritesCities
+import com.weather.entties.EmptyFavoritesCitiesException
 import com.weather.entties.FavoriteCityId
 import com.weather.useecasses.engine.toMutableLiveData
 import org.junit.Assert
@@ -35,7 +35,7 @@ class RetrieveFavoriteCitiesIdsTest {
     }
 
     // if favorites is empty, throw an exception
-    @Test(expected = EmptyFavoritesCities::class)
+    @Test(expected = EmptyFavoritesCitiesException::class)
     fun `retrieveFavoriteCitiesIds with empty ids then throw an exception`() {
         //Arrange
         val retrieving = false.toMutableLiveData()

@@ -18,17 +18,14 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
-class HomeScreen : AppCompatActivity() {
+class HomeActivity : AppCompatActivity() {
     private val disposables = CompositeDisposable()
     private val viewModel by lazy { ViewModelProviders.of(this).get(HomeViewModel::class.java) }
-
     private val showCityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             viewModel.showCity.onNext(intent?.getSerializableExtra(INTENT_EXTRA_CITY)!!)
         }
-
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,23 +33,21 @@ class HomeScreen : AppCompatActivity() {
 
         viewModel.retrieving
             .observe(this, Observer { searchProgressBar.visibility = if (it!!) View.VISIBLE else View.GONE })
-
         home_recyclerView.layoutManager = LinearLayoutManager(this)
         home_recyclerView.adapter = HomeAdapter(viewModel.citiesResult, this)
-
         search_button.setOnClickListener { viewModel.onSearchButtonClicked(searchEditText.text.toString()) }
 
         viewModel.showCity
             .debounce(500, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { startForeCast(it) }
+            .subscribe { startForeCastAcitvity(it) }
             .also { disposables.add(it) }
 
         registerReceiver(showCityBroadcastReceiver, IntentFilter(BROADCAST_ACTION_SHOW_CITY))
     }
 
-    private fun startForeCast(it: Serializable?) {
-        Intent(this@HomeScreen, ForecastActivity::class.java)
+    private fun startForeCastAcitvity(it: Serializable?) {
+        Intent(this@HomeActivity, ForecastActivity::class.java)
             .apply { putExtra(INTENT_EXTRA_CITY, it) }
             .also { startActivity(it) }
     }

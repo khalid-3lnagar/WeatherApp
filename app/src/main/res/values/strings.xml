@@ -11,5 +11,7 @@
     <string name="longitude">Longitude: </string>
     <string name="latitude">Latitude: </string>
     <string name="show_city">Show</string>
+    <string name="favorite">Favorite</string>
+    <string name="error_image">Error Image</string>
 
 </resources>

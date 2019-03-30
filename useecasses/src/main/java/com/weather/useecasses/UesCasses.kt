@@ -2,10 +2,14 @@ package com.weather.useecasses
 
 import android.arch.lifecycle.MutableLiveData
 import com.weather.entties.City
-import com.weather.entties.EmptyFavoritesCities
+import com.weather.entties.EmptyFavoritesCitiesException
 import com.weather.entties.FavoriteCityId
+import com.weather.entties.ForecastsResponse
 import com.weather.useecasses.reposotereys.CitiesRepository
 import com.weather.useecasses.reposotereys.CitiesRepositoryImplementer
+import com.weather.useecasses.reposotereys.ForecastRepository
+import com.weather.useecasses.reposotereys.forecastRepositoryImplementer
+import io.reactivex.Single
 
 const val DEFAULT_CLICKED_VALUE = "un clicked"
 const val ON_CLICK_CLICKED_VALUE = "clicked"
@@ -48,7 +52,7 @@ class RetrieveFavoriteCitiesIds(
             .takeUnless { it.value ?: false }
             ?.also { it.postValue(true) }
             ?.let { repository.retrieveFavoritesCitiesIds() }
-            ?.ifEmpty { throw EmptyFavoritesCities() }
+            ?.ifEmpty { throw EmptyFavoritesCitiesException() }
             ?.also { result.postValue(it) }
             ?.also { retrieving.postValue(false) }
 
@@ -69,6 +73,13 @@ class RetrieveCitiesByIds(
             ?.also { result.postValue(it) }
             ?.also { retrieving.postValue(false) }
     }
+}
+
+class RetrieveForecastById(
+    private val repository: ForecastRepository = forecastRepositoryImplementer
+) {
+    operator fun invoke(cityId: Long): Single<ForecastsResponse> =
+        repository.retrieveCityForecastById(cityId.toString())
 }
 
 

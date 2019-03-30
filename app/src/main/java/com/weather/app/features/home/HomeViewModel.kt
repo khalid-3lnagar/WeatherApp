@@ -14,12 +14,12 @@ import io.reactivex.subjects.PublishSubject
 import java.io.Serializable
 
 class HomeViewModel(
+    val showCity: PublishSubject<Serializable> = PublishSubject.create(),
     val retrieving: MutableLiveData<Boolean> = false.toMutableLiveData(),
-    val citiesResult: CitiesResult = ArrayList<City>().toMutableLiveData()
+    val citiesResult: CitiesResult = ArrayList<City>().toMutableLiveData(),
+    private val disposables: CompositeDisposable = CompositeDisposable(),
+    private val retrieveCityByName: RetrieveCityByName = RetrieveCityByName(retrieving, citiesResult)
 ) : ViewModel() {
-    private val disposables = CompositeDisposable()
-    val showCity: PublishSubject<Serializable> = PublishSubject.create()
-    val retrieveCityByName = RetrieveCityByName(retrieving, citiesResult)
     fun onSearchButtonClicked(cityName: String?) {
 
         Observable.fromCallable { retrieveCityByName(cityName) }

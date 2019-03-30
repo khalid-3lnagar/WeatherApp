@@ -1,0 +1,108 @@
+package com.weather.app.features.forecast
+
+import android.arch.lifecycle.DefaultLifecycleObserver
+import android.arch.lifecycle.LifecycleOwner
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import com.weather.app.R
+import com.weather.app.features.home.INTENT_EXTRA_CITY
+import com.weather.entties.City
+import com.weather.entties.Forecast
+import com.weather.useecasses.RetrieveForecastById
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_forecast.*
+
+class ForecastActivity : AppCompatActivity(), ForecastView {
+    private val disposables = CompositeDisposable()
+
+    private val presenter by lazy { ForecastPresenterImplementer(this) }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_forecast)
+        lifecycle.addObserver(presenter)
+        presenter.initializeCity(getCity()!!)
+        errorImage.setOnClickListener { finish() }
+    }
+
+    private fun getCity() = intent?.getSerializableExtra(INTENT_EXTRA_CITY)?.let { (it as City) }
+
+    override fun setCityTitle(cityName: String) {
+        title = cityName
+    }
+
+    override fun startLoading() {
+        forecastTxt.visibility = GONE
+        forecastLoading.visibility = VISIBLE
+    }
+
+    override fun stopLoading() {
+        forecastTxt.visibility = VISIBLE
+        forecastLoading.visibility = GONE
+    }
+
+    override fun drawForecastList(forecastList: List<Forecast>) {
+        val builder = StringBuilder()
+        forecastList.forEach { builder.append("\n\n\n$it") }
+        forecastTxt.text = builder.toString()
+    }
+
+    override fun drawErrorImage() {
+        errorImage.visibility = View.VISIBLE
+    }
+
+    override fun removeErrorImage() {
+        errorImage.visibility = View.GONE
+    }
+
+    override fun drawAsFavoriteCity() {
+    }
+
+    override fun drawAsNotFavoriteCity() {
+    }
+
+}
+
+class ForecastPresenterImplementer(private val view: ForecastView) : ForecastPresenter, DefaultLifecycleObserver {
+    private var forecastCity: City? = null
+    private val disposables by lazy { CompositeDisposable() }
+    private val retrieveForecastById by lazy { RetrieveForecastById() }
+    override fun initializeCity(city: City) {
+        city
+            .also { forecastCity = it }
+            .also { view.setCityTitle(it.name!!) }
+            .also { retrieveForecastInBackground(it.id) }
+
+
+    }
+
+    private fun retrieveForecastInBackground(id: Long) {
+        id
+            .also { view.startLoading() }
+            .let { retrieveForecastById(it) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { it.forecasts }
+            .doFinally { view.stopLoading() }
+            .subscribe({ view.drawForecastList(it!!) }, { view.drawErrorImage() })
+            .also { disposables.add(it) }
+    }
+
+    override fun addCityToFavorites() {
+
+    }
+
+    override fun removeCityFromFavorites() {
+
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        disposables.dispose()
+    }
+}
+
+

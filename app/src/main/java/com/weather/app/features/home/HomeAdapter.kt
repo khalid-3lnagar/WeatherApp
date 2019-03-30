@@ -44,25 +44,21 @@ class CityViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val cityNameTxt by lazy { view.city_name_txt }
     private val cityCountryTxt by lazy { view.city_country_txt }
     private val cityLatitudeTxt by lazy { view.city_latitude_txt }
-    private val cityLongtudeTxt by lazy { view.city_longitude_txt }
+    private val cityLongitudeTat by lazy { view.city_longitude_txt }
     private val showCityBtn by lazy { view.show_city }
-
-    init {
-
-    }
 
     fun bind(city: City) {
         with(city) {
             cityNameTxt.text = name
             cityCountryTxt.text = country
             cityLatitudeTxt.text = coordinates?.latitude.toString()
-            cityLongtudeTxt.text = coordinates?.longitude.toString()
+            cityLongitudeTat.text = coordinates?.longitude.toString()
         }
-        showCityBtn.setOnClickListener { sendBroadcast(city) }
+        showCityBtn.setOnClickListener { sendShowCityBroadcast(city) }
 
     }
 
-    private fun sendBroadcast(city: City) {
+    private fun sendShowCityBroadcast(city: City) {
         Intent(BROADCAST_ACTION_SHOW_CITY)
             .putExtra(INTENT_EXTRA_CITY, city as Serializable)
             .also { view.context.sendBroadcast(it) }
