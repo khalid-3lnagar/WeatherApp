@@ -33,6 +33,7 @@ class RetrieveCityByName(
 ) {
     operator fun invoke(cityName: String?) {
         cityName
+            ?.trim()
             ?.takeUnless { retrieving.value ?: false }
             ?.takeUnless { it.isBlank() }
             ?.also { retrieving.postValue(true) }
