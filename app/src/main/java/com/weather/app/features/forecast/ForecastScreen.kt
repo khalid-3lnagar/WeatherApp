@@ -85,10 +85,14 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
 
 }
 
-class ForecastPresenterImplementer(private val view: ForecastView) : ForecastPresenter, DefaultLifecycleObserver {
-    private var forecastCity: City? = null
+
+class ForecastPresenterImplementer(
+    private val view: ForecastView,
+    private val retrieveForecastById: RetrieveForecastById = RetrieveForecastById()
+) : ForecastPresenter, DefaultLifecycleObserver {
     private val disposables by lazy { CompositeDisposable() }
-    private val retrieveForecastById by lazy { RetrieveForecastById() }
+    private var forecastCity: City? = null
+
     override fun initializeCity(city: City) {
         city
             .also { forecastCity = it }

@@ -54,6 +54,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-core-utils'
     }
+    testImplementation"com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
 
     api project(':entties')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

@@ -29,12 +29,12 @@ interface ServerApi {
     ): Single<ForecastsResponse>
 }
 
-private val retrtofit by lazy {
+private val retrofit by lazy {
     Retrofit.Builder()
         .baseUrl(OPEN_WEATHER_MAPS_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build()
 }
-val retrofitApi by lazy { retrtofit.create(ServerApi::class.java) }
+val retrofitApi: ServerApi by lazy { retrofit.create(ServerApi::class.java) }
 
