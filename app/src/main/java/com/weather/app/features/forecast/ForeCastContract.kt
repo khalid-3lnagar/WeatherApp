@@ -18,7 +18,6 @@ interface ForecastView {
     fun stopLoading()
     fun drawForecastList(forecastList: List<Forecast>)
     fun drawErrorImage()
-    fun removeErrorImage()
     fun drawAsFavoriteCity()
     fun drawAsNotFavoriteCity()
 

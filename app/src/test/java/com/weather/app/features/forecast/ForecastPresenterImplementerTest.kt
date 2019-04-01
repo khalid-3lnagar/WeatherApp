@@ -1,7 +1,7 @@
 package com.weather.app.features.forecast
 
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.weather.entties.City
 import com.weather.entties.ForecastsResponse
@@ -13,21 +13,26 @@ import org.mockito.Mockito.verify
 
 class ForecastPresenterImplementerTest {
 
-    private val cityMock by lazy { mock<City>() }
-
-    private val viewMock by lazy { mock<ForecastView>() }
-
-    private val retrieveForecastById by lazy { mock<RetrieveForecastById>() }
-
-    private val testScheduler by lazy { TestScheduler() }
 
     @Test
     fun `initializeCity then update viewTitle`() {
 
         //Arrange
-        val responseMock = Single.just<ForecastsResponse>(ForecastsResponse(cityMock, 0, listOf()))
-        given { cityMock.name }.willReturn("cairo")
-        given { retrieveForecastById.invoke(eq(cityMock.id)) }.willReturn(responseMock)
+        val testScheduler = TestScheduler()
+
+        val cityMock = mock<City> {
+            on { name } doReturn "cairo"
+        }
+        val responseMock = Single.just<ForecastsResponse>(
+            ForecastsResponse(cityMock, 0, listOf())
+        )
+
+        val viewMock = mock<ForecastView>()
+
+        val retrieveForecastById = mock<RetrieveForecastById> {
+            on { invoke(eq(cityMock.id)) } doReturn responseMock
+        }
+
         val presenter = ForecastPresenterImplementer(viewMock, retrieveForecastById, testScheduler, testScheduler)
 
         //Act
@@ -43,9 +48,18 @@ class ForecastPresenterImplementerTest {
     fun `initializeCity then start loading`() {
 
         //Arrange
+        val testScheduler = TestScheduler()
+
+        val cityMock = mock<City> {
+            on { name } doReturn "cairo"
+        }
         val responseMock = Single.just<ForecastsResponse>(ForecastsResponse(cityMock, 0, listOf()))
-        given { cityMock.name }.willReturn("cairo")
-        given { retrieveForecastById.invoke(eq(cityMock.id)) }.willReturn(responseMock)
+
+        val viewMock = mock<ForecastView>()
+
+        val retrieveForecastById = mock<RetrieveForecastById> {
+            on { invoke(eq(cityMock.id)) } doReturn responseMock
+        }
         val presenter = ForecastPresenterImplementer(viewMock, retrieveForecastById, testScheduler, testScheduler)
 
         //Act
@@ -61,9 +75,18 @@ class ForecastPresenterImplementerTest {
     fun `initializeCity with success response then invoke drawForecastList`() {
 
         //Arrange
+        val testScheduler = TestScheduler()
+
+        val cityMock = mock<City> {
+            on { name } doReturn "cairo"
+        }
         val responseMock = Single.just<ForecastsResponse>(ForecastsResponse(cityMock, 0, listOf()))
-        given { cityMock.name }.willReturn("cairo")
-        given { retrieveForecastById.invoke(eq(cityMock.id)) }.willReturn(responseMock)
+
+        val viewMock = mock<ForecastView>()
+
+        val retrieveForecastById = mock<RetrieveForecastById> {
+            on { invoke(eq(cityMock.id)) } doReturn responseMock
+        }
         val presenter = ForecastPresenterImplementer(viewMock, retrieveForecastById, testScheduler, testScheduler)
 
         //Act
@@ -79,9 +102,18 @@ class ForecastPresenterImplementerTest {
     fun `initializeCity with forecast equals null then invoke drawErrorImage`() {
 
         //Arrange
+        val testScheduler = TestScheduler()
+
+        val cityMock = mock<City> {
+            on { name } doReturn "cairo"
+        }
         val responseMock = Single.just<ForecastsResponse>(ForecastsResponse(cityMock, 0, null))
-        given { cityMock.name }.willReturn("cairo")
-        given { retrieveForecastById.invoke(eq(cityMock.id)) }.willReturn(responseMock)
+
+        val viewMock = mock<ForecastView>()
+
+        val retrieveForecastById = mock<RetrieveForecastById> {
+            on { invoke(eq(cityMock.id)) } doReturn responseMock
+        }
         val presenter = ForecastPresenterImplementer(viewMock, retrieveForecastById, testScheduler, testScheduler)
 
         //Act
@@ -97,9 +129,18 @@ class ForecastPresenterImplementerTest {
     fun `initializeCity when response is handled stop loading`() {
 
         //Arrange
+        val testScheduler = TestScheduler()
+
+        val cityMock = mock<City> {
+            on { name } doReturn "cairo"
+        }
         val responseMock = Single.just<ForecastsResponse>(ForecastsResponse(cityMock, 0, listOf()))
-        given { cityMock.name }.willReturn("cairo")
-        given { retrieveForecastById.invoke(eq(cityMock.id)) }.willReturn(responseMock)
+
+        val viewMock = mock<ForecastView>()
+
+        val retrieveForecastById = mock<RetrieveForecastById> {
+            on { invoke(eq(cityMock.id)) } doReturn responseMock
+        }
         val presenter = ForecastPresenterImplementer(viewMock, retrieveForecastById, testScheduler, testScheduler)
 
         //Act

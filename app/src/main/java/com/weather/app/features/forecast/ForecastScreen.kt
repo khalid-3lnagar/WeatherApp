@@ -66,9 +66,6 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
         errorImage.visibility = View.VISIBLE
     }
 
-    override fun removeErrorImage() {
-        errorImage.visibility = View.GONE
-    }
 
     override fun stopLoading() {
         forecastTxt.visibility = VISIBLE
