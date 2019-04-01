@@ -12,13 +12,13 @@ import com.weather.app.features.home.INTENT_EXTRA_CITY
 import com.weather.entties.City
 import com.weather.entties.Forecast
 import com.weather.useecasses.RetrieveForecastById
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_forecast.*
 
 class ForecastActivity : AppCompatActivity(), ForecastView {
-    private val disposables = CompositeDisposable()
 
     private val presenter by lazy { ForecastPresenterImplementer(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,11 +52,6 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
         forecastLoading.visibility = VISIBLE
     }
 
-    override fun stopLoading() {
-        forecastTxt.visibility = VISIBLE
-        forecastLoading.visibility = GONE
-    }
-
     override fun drawForecastList(forecastList: List<Forecast>) {
 
         val builder = StringBuilder()
@@ -75,6 +70,11 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
         errorImage.visibility = View.GONE
     }
 
+    override fun stopLoading() {
+        forecastTxt.visibility = VISIBLE
+        forecastLoading.visibility = GONE
+    }
+
     override fun drawAsFavoriteCity() {
         favoriteFloatingBtn.setImageResource(R.drawable.ic_favorite)
     }
@@ -88,7 +88,9 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
 
 class ForecastPresenterImplementer(
     private val view: ForecastView,
-    private val retrieveForecastById: RetrieveForecastById = RetrieveForecastById()
+    private val retrieveForecastById: RetrieveForecastById = RetrieveForecastById(),
+    private val schedulerIo: Scheduler = Schedulers.io(),
+    private val mainScheduler: Scheduler = AndroidSchedulers.mainThread()
 ) : ForecastPresenter, DefaultLifecycleObserver {
     private val disposables by lazy { CompositeDisposable() }
     private var forecastCity: City? = null
@@ -106,8 +108,8 @@ class ForecastPresenterImplementer(
         id
             .also { view.startLoading() }
             .let { retrieveForecastById(it) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(schedulerIo)
+            .observeOn(mainScheduler)
             .map { it.forecasts }
             .doFinally { view.stopLoading() }
             .subscribe({ view.drawForecastList(it!!) }, { view.drawErrorImage() })
