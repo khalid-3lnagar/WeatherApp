@@ -8,6 +8,7 @@ import com.weather.entties.City
 import com.weather.entties.ForecastsResponse
 import com.weather.useecasses.AddFavoriteCityById
 import com.weather.useecasses.IsFavoriteCity
+import com.weather.useecasses.RemoveCityFromFavoritesById
 import com.weather.useecasses.RetrieveForecastById
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
@@ -250,5 +251,26 @@ class ForecastPresenterImplementerTest {
         verify(viewMock).drawAsFavoriteCity()
     }
 
+    @Test
+    fun `removeCityFromFavorites then drawAsNotFavoriteCity`() {
+        //Arrange
+        val testScheduler = TestScheduler()
+        val viewMock = mock<ForecastView> {}
+        val cityMock = mock<City> { on { id } doReturn 123L }
+        val removeCityFromFavorites = mock<RemoveCityFromFavoritesById> {}
+        val presenter = ForecastPresenterImplementer(
+            view = viewMock,
+            schedulerIo = testScheduler,
+            mainScheduler = testScheduler,
+            forecastCity = cityMock,
+            removeCityFromFavoritesById = removeCityFromFavorites
+        )
+        //Act
+        presenter.removeCityFromFavorites()
+        testScheduler.triggerActions()
+
+        //Assert
+        verify(viewMock).drawAsNotFavoriteCity()
+    }
 
 }

@@ -98,4 +98,17 @@ class AddFavoriteCityById(
             ?.also { repository.addFavoriteCityById(FavoriteCityId(it)) }
 
     }
+
+
+}
+
+class RemoveCityFromFavoritesById(
+    private val repository: FavoriteRepository = FavoriteRepository(),
+    private val isFavoriteCity: IsFavoriteCity = IsFavoriteCity()
+) {
+    operator fun invoke(id: Long) {
+        id.takeIf { isFavoriteCity(id) }
+            ?.also { repository.removeFavoritesCitiesById(FavoriteCityId(it)) }
+
+    }
 }

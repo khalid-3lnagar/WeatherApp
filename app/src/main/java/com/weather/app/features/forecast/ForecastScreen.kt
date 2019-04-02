@@ -13,6 +13,7 @@ import com.weather.entties.City
 import com.weather.entties.Forecast
 import com.weather.useecasses.AddFavoriteCityById
 import com.weather.useecasses.IsFavoriteCity
+import com.weather.useecasses.RemoveCityFromFavoritesById
 import com.weather.useecasses.RetrieveForecastById
 import io.reactivex.Completable.fromCallable
 import io.reactivex.Scheduler
@@ -35,16 +36,10 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
     }
 
     private fun onFavoriteBtnClicked(it: View) {
-        with(it) {
-            isSelected = if (!isSelected) {
-                presenter.addCityToFavorites()
-                true
-            } else {
-                presenter.removeCityFromFavorites()
-                false
-            }
-
-        }
+        if (it.isSelected)
+            presenter.removeCityFromFavorites()
+        else
+            presenter.addCityToFavorites()
 
     }
 
@@ -73,7 +68,6 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
         errorImage.visibility = View.VISIBLE
     }
 
-
     override fun stopLoading() {
         forecastTxt.visibility = VISIBLE
         favoriteFloatingBtn.show()
@@ -81,11 +75,18 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
     }
 
     override fun drawAsFavoriteCity() {
-        favoriteFloatingBtn.setImageResource(R.drawable.ic_favorite)
+        with(favoriteFloatingBtn) {
+            setImageResource(R.drawable.ic_favorite)
+            isSelected = true
+        }
+
     }
 
     override fun drawAsNotFavoriteCity() {
-        favoriteFloatingBtn.setImageResource(R.drawable.ic_not_favorite)
+        with(favoriteFloatingBtn) {
+            setImageResource(R.drawable.ic_not_favorite)
+            isSelected = false
+        }
     }
 
 }
@@ -98,10 +99,10 @@ class ForecastPresenterImplementer(
     private val mainScheduler: Scheduler = AndroidSchedulers.mainThread(),
     private val isFavoriteCity: IsFavoriteCity = IsFavoriteCity(),
     private val addFavoriteCityById: AddFavoriteCityById = AddFavoriteCityById(),
+    private val removeCityFromFavoritesById: RemoveCityFromFavoritesById = RemoveCityFromFavoritesById(),
     private var forecastCity: City? = null
 ) : ForecastPresenter, DefaultLifecycleObserver {
     private val disposables by lazy { CompositeDisposable() }
-
 
     override fun initializeCity(city: City) {
         city
@@ -143,11 +144,14 @@ class ForecastPresenterImplementer(
             .subscribe({ view.drawAsFavoriteCity() }, { view.drawErrorImage() })
             .also { disposables.add(it) }
 
-
     }
 
     override fun removeCityFromFavorites() {
-
+        fromCallable { removeCityFromFavoritesById(forecastCity!!.id) }
+            .subscribeOn(schedulerIo)
+            .observeOn(mainScheduler)
+            .subscribe({ view.drawAsNotFavoriteCity() }, { view.drawErrorImage() })
+            .also { disposables.add(it) }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
