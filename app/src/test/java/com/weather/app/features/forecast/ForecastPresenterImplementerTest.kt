@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.weather.entties.City
 import com.weather.entties.ForecastsResponse
+import com.weather.useecasses.AddFavoriteCityById
 import com.weather.useecasses.IsFavoriteCity
 import com.weather.useecasses.RetrieveForecastById
 import io.reactivex.Single
@@ -224,6 +225,29 @@ class ForecastPresenterImplementerTest {
         //Assert
         verify(viewMock).drawAsNotFavoriteCity()
 
+    }
+
+    @Test
+    fun `addCityToFavorites then drawAsFavoriteCity`() {
+        //Arrange
+        val testScheduler = TestScheduler()
+        val viewMock = mock<ForecastView>()
+        val cityMock = mock<City> { on { id } doReturn 123 }
+        val addFavoriteCityByIdMock = mock<AddFavoriteCityById>()
+        val presenter = ForecastPresenterImplementer(
+            view = viewMock,
+            forecastCity = cityMock,
+            schedulerIo = testScheduler,
+            mainScheduler = testScheduler,
+            addFavoriteCityById = addFavoriteCityByIdMock
+        )
+
+        //Act
+        presenter.addCityToFavorites()
+        testScheduler.triggerActions()
+
+        //Assert
+        verify(viewMock).drawAsFavoriteCity()
     }
 
 

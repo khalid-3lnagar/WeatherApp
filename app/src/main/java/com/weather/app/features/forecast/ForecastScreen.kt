@@ -11,8 +11,10 @@ import com.weather.app.R
 import com.weather.app.features.home.INTENT_EXTRA_CITY
 import com.weather.entties.City
 import com.weather.entties.Forecast
+import com.weather.useecasses.AddFavoriteCityById
 import com.weather.useecasses.IsFavoriteCity
 import com.weather.useecasses.RetrieveForecastById
+import io.reactivex.Completable.fromCallable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,13 +35,17 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
     }
 
     private fun onFavoriteBtnClicked(it: View) {
-        if (it.isSelected) {
-            drawAsNotFavoriteCity()
-            it.isSelected = false
-        } else {
-            drawAsFavoriteCity()
-            it.isSelected = true
+        with(it) {
+            isSelected = if (!isSelected) {
+                presenter.addCityToFavorites()
+                true
+            } else {
+                presenter.removeCityFromFavorites()
+                false
+            }
+
         }
+
     }
 
     private fun getCity() = intent?.getSerializableExtra(INTENT_EXTRA_CITY)?.let { (it as City) }
@@ -90,10 +96,12 @@ class ForecastPresenterImplementer(
     private val retrieveForecastById: RetrieveForecastById = RetrieveForecastById(),
     private val schedulerIo: Scheduler = Schedulers.io(),
     private val mainScheduler: Scheduler = AndroidSchedulers.mainThread(),
-    private val isFavoriteCity: IsFavoriteCity = IsFavoriteCity()
+    private val isFavoriteCity: IsFavoriteCity = IsFavoriteCity(),
+    private val addFavoriteCityById: AddFavoriteCityById = AddFavoriteCityById(),
+    private var forecastCity: City? = null
 ) : ForecastPresenter, DefaultLifecycleObserver {
     private val disposables by lazy { CompositeDisposable() }
-    private var forecastCity: City? = null
+
 
     override fun initializeCity(city: City) {
         city
@@ -129,6 +137,11 @@ class ForecastPresenterImplementer(
     }
 
     override fun addCityToFavorites() {
+        fromCallable { addFavoriteCityById(forecastCity!!.id) }
+            .subscribeOn(schedulerIo)
+            .observeOn(mainScheduler)
+            .subscribe({ view.drawAsFavoriteCity() }, { view.drawErrorImage() })
+            .also { disposables.add(it) }
 
 
     }

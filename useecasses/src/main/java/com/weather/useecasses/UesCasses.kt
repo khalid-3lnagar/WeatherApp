@@ -80,8 +80,22 @@ class RetrieveForecastById(
         repository.retrieveCityForecastById(cityId.toString())
 }
 
-class IsFavoriteCity(private val repository: FavoriteRepository = FavoriteRepository()) {
+class IsFavoriteCity(
+    private val repository: FavoriteRepository = FavoriteRepository()
+) {
 
     operator fun invoke(id: Long): Boolean = repository.retrieveFavoriteCityById(id).isNotEmpty()
 
+}
+
+class AddFavoriteCityById(
+    private val repository: FavoriteRepository = FavoriteRepository(),
+    private val isFavoriteCity: IsFavoriteCity = IsFavoriteCity()
+) {
+    operator fun invoke(id: Long) {
+        id
+            .takeUnless { isFavoriteCity(id) }
+            ?.also { repository.addFavoriteCityById(FavoriteCityId(it)) }
+
+    }
 }
