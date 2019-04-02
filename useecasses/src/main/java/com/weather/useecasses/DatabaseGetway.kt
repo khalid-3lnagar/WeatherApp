@@ -31,6 +31,9 @@ interface FavoritesDao {
     @Delete
     fun delete(id: FavoriteCityId)
 
+    @Query("select * from FavoriteCityId where id  like '%'||:id||'%' ")
+    fun queryFavoriteById(id: Long): List<FavoriteCityId>
+
 }
 
 @Dao
@@ -55,7 +58,7 @@ class CoordinatesTypeConverter {
     fun fromJson(jsonCoordinates: String) = Gson().fromJson(jsonCoordinates, Coordinates::class.java)
 }
 
-//DatabaseInitializers
+//DatabaseInitializer
 
 private const val DATABASE_NAME = "DatabaseGateway.db"
 

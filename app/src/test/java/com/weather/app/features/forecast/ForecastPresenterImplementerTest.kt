@@ -1,10 +1,12 @@
 package com.weather.app.features.forecast
 
+import com.nhaarman.mockitokotlin2.atLeast
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.weather.entties.City
 import com.weather.entties.ForecastsResponse
+import com.weather.useecasses.IsFavoriteCity
 import com.weather.useecasses.RetrieveForecastById
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
@@ -67,7 +69,7 @@ class ForecastPresenterImplementerTest {
         testScheduler.triggerActions()
 
         //Assert
-        verify(viewMock).startLoading()
+        verify(viewMock, atLeast(1)).startLoading()
 
     }
 
@@ -121,9 +123,8 @@ class ForecastPresenterImplementerTest {
         testScheduler.triggerActions()
 
         //Assert
-        verify(viewMock).drawErrorImage()
+        verify(viewMock, atLeast(1)).drawErrorImage()
     }
-
 
     @Test
     fun `initializeCity when response is handled stop loading`() {
@@ -148,8 +149,82 @@ class ForecastPresenterImplementerTest {
         testScheduler.triggerActions()
 
         //Assert
-        verify(viewMock).stopLoading()
+        verify(viewMock, atLeast(1)).stopLoading()
 
     }
+
+    @Test
+    fun `initializeCity with city is Favorite City then drawAsFavoriteCity`() {
+
+        //Arrange
+        val testScheduler = TestScheduler()
+
+        val cityMock = mock<City> {
+            on { name } doReturn "cairo"
+            on { id } doReturn 123
+        }
+        val viewMock = mock<ForecastView>()
+        val responseMock = Single.just<ForecastsResponse>(ForecastsResponse(cityMock, 0, listOf()))
+
+        val isFavoriteCity = mock<IsFavoriteCity> {
+            on { invoke(eq(123)) } doReturn true
+        }
+        val retrieveForecastById = mock<RetrieveForecastById> {
+            on { invoke(eq(123)) } doReturn responseMock
+        }
+        val presenter =
+            ForecastPresenterImplementer(
+                view = viewMock,
+                retrieveForecastById = retrieveForecastById,
+                schedulerIo = testScheduler,
+                mainScheduler = testScheduler,
+                isFavoriteCity = isFavoriteCity
+            )
+
+        //Act
+        presenter.initializeCity(cityMock)
+        testScheduler.triggerActions()
+
+        //Assert
+        verify(viewMock).drawAsFavoriteCity()
+
+    }
+
+    @Test
+    fun `initializeCity with city is not Favorite city then drawAsNotFavoriteCity`() {
+        //Arrange
+        val testScheduler = TestScheduler()
+
+        val cityMock = mock<City> {
+            on { name } doReturn "cairo"
+            on { id } doReturn 123
+        }
+        val viewMock = mock<ForecastView>()
+        val responseMock = Single.just<ForecastsResponse>(ForecastsResponse(cityMock, 0, listOf()))
+
+        val isFavoriteCity = mock<IsFavoriteCity> {
+            on { invoke(eq(123)) } doReturn false
+        }
+        val retrieveForecastById = mock<RetrieveForecastById> {
+            on { invoke(eq(123)) } doReturn responseMock
+        }
+        val presenter =
+            ForecastPresenterImplementer(
+                view = viewMock,
+                retrieveForecastById = retrieveForecastById,
+                schedulerIo = testScheduler,
+                mainScheduler = testScheduler,
+                isFavoriteCity = isFavoriteCity
+            )
+
+        //Act
+        presenter.initializeCity(cityMock)
+        testScheduler.triggerActions()
+
+        //Assert
+        verify(viewMock).drawAsNotFavoriteCity()
+
+    }
+
 
 }

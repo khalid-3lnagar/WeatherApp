@@ -13,10 +13,15 @@ class CitiesRepositoryImplementer(private val database: Lazy<WeatherDatabase> = 
 
     override fun retrieveFavoritesCitiesIds() = database.value.favoritesDao.queryAll()
 
+}
+
+class FavoriteRepository(private val database: Lazy<WeatherDatabase> = lazy { weatherDatabase }) {
+
     fun addFavoriteCityById(favoriteCityId: FavoriteCityId) = database.value.favoritesDao.insert(favoriteCityId)
 
     fun removeFavoritesCitiesById(favoriteCityId: FavoriteCityId) = database.value.favoritesDao.delete(favoriteCityId)
 
+    fun retrieveFavoriteCityById(id: Long) = database.value.favoritesDao.queryFavoriteById(id)
 }
 
 interface CitiesRepository {
@@ -26,8 +31,5 @@ interface CitiesRepository {
     fun retrieveCitiesByIds(cityIds: List<Long>): List<City>
 
     fun retrieveFavoritesCitiesIds(): List<FavoriteCityId>
-
-    //fun addFavoriteCityById(favoriteCityId: FavoriteCityId)
-    // fun removeFavoritesCitiesById(favoriteCityId: FavoriteCityId)
 
 }

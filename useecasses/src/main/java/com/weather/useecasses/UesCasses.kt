@@ -5,10 +5,7 @@ import com.weather.entties.City
 import com.weather.entties.EmptyFavoritesCitiesException
 import com.weather.entties.FavoriteCityId
 import com.weather.entties.ForecastsResponse
-import com.weather.useecasses.reposotereys.CitiesRepository
-import com.weather.useecasses.reposotereys.CitiesRepositoryImplementer
-import com.weather.useecasses.reposotereys.ForecastRepository
-import com.weather.useecasses.reposotereys.forecastRepositoryImplementer
+import com.weather.useecasses.reposotereys.*
 import io.reactivex.Single
 
 const val DEFAULT_CLICKED_VALUE = "un clicked"
@@ -83,6 +80,8 @@ class RetrieveForecastById(
         repository.retrieveCityForecastById(cityId.toString())
 }
 
+class IsFavoriteCity(private val repository: FavoriteRepository = FavoriteRepository()) {
 
+    operator fun invoke(id: Long): Boolean = repository.retrieveFavoriteCityById(id).isNotEmpty()
 
-
+}

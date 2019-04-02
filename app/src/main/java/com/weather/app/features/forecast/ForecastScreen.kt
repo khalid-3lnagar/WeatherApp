@@ -11,8 +11,10 @@ import com.weather.app.R
 import com.weather.app.features.home.INTENT_EXTRA_CITY
 import com.weather.entties.City
 import com.weather.entties.Forecast
+import com.weather.useecasses.IsFavoriteCity
 import com.weather.useecasses.RetrieveForecastById
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -57,7 +59,6 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
         val builder = StringBuilder()
         forecastList.forEach { builder.append("\n\n\n$it") }
         forecastTxt.text = builder.toString()
-        favoriteFloatingBtn.show()
 
     }
 
@@ -69,6 +70,7 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
 
     override fun stopLoading() {
         forecastTxt.visibility = VISIBLE
+        favoriteFloatingBtn.show()
         forecastLoading.visibility = GONE
     }
 
@@ -87,7 +89,8 @@ class ForecastPresenterImplementer(
     private val view: ForecastView,
     private val retrieveForecastById: RetrieveForecastById = RetrieveForecastById(),
     private val schedulerIo: Scheduler = Schedulers.io(),
-    private val mainScheduler: Scheduler = AndroidSchedulers.mainThread()
+    private val mainScheduler: Scheduler = AndroidSchedulers.mainThread(),
+    private val isFavoriteCity: IsFavoriteCity = IsFavoriteCity()
 ) : ForecastPresenter, DefaultLifecycleObserver {
     private val disposables by lazy { CompositeDisposable() }
     private var forecastCity: City? = null
@@ -96,9 +99,21 @@ class ForecastPresenterImplementer(
         city
             .also { forecastCity = it }
             .also { view.setCityTitle(it.name!!) }
-            .also { retrieveForecastInBackground(it.id) }
+            .let { it.id }
+            .also { checkIfFavoriteCity(it) }
+            .also { retrieveForecastInBackground(it) }
 
+    }
 
+    private fun checkIfFavoriteCity(id: Long) {
+
+        id
+            .let { Single.fromCallable { isFavoriteCity(it) } }
+            .subscribeOn(schedulerIo)
+            .observeOn(mainScheduler)
+            .subscribe({ if (it) view.drawAsFavoriteCity() else view.drawAsNotFavoriteCity() },
+                { view.drawErrorImage() })
+            .also { disposables.add(it) }
     }
 
     private fun retrieveForecastInBackground(id: Long) {
@@ -114,6 +129,7 @@ class ForecastPresenterImplementer(
     }
 
     override fun addCityToFavorites() {
+
 
     }
 
