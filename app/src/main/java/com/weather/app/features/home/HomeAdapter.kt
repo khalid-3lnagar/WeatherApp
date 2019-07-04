@@ -41,20 +41,15 @@ class HomeAdapter(private val cities: CitiesResult, lifecycleOwner: LifecycleOwn
 }
 
 class CityViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-    private val cityNameTxt by lazy { view.city_name_txt }
-    private val cityCountryTxt by lazy { view.city_country_txt }
-    private val cityLatitudeTxt by lazy { view.city_latitude_txt }
-    private val cityLongitudeTat by lazy { view.city_longitude_txt }
-    private val showCityBtn by lazy { view.show_city }
 
     fun bind(city: City) {
         with(city) {
-            cityNameTxt.text = name
-            cityCountryTxt.text = country
-            cityLatitudeTxt.text = coordinates?.latitude.toString()
-            cityLongitudeTat.text = coordinates?.longitude.toString()
+            view.txt_city_name.text = name
+            view.txt_city_country.text = country
+            view.txt_city_latitude.text = coordinates?.latitude.toString()
+            view.txt_city_longitude.text = coordinates?.longitude.toString()
         }
-        showCityBtn.setOnClickListener { sendShowCityBroadcast(city) }
+        view.btn_show_city.setOnClickListener { sendShowCityBroadcast(city) }
 
     }
 

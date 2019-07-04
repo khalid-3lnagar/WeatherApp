@@ -11,7 +11,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.weather.app.R
-import com.weather.app.features.forecast.ForecastActivity
+import com.weather.app.features.home.favorites.FavoritesActivity
+import com.weather.app.features.home.forecast.ForecastActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -35,7 +36,11 @@ class HomeActivity : AppCompatActivity() {
             .observe(this, Observer { searchProgressBar.visibility = if (it!!) View.VISIBLE else View.GONE })
         home_recyclerView.layoutManager = LinearLayoutManager(this)
         home_recyclerView.adapter = HomeAdapter(viewModel.citiesResult, this)
+
         search_button.setOnClickListener { viewModel.onSearchButtonClicked(searchEditText.text.toString()) }
+
+        btn_favorite_cities
+            .setOnClickListener { Intent(this, FavoritesActivity::class.java).also(::startActivity) }
 
         viewModel.showCity
             .debounce(500, TimeUnit.MILLISECONDS)

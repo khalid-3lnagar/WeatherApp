@@ -1,4 +1,4 @@
-package com.weather.app.features.forecast
+package com.weather.app.features.home.forecast
 
 import com.weather.entties.City
 import com.weather.entties.Forecast

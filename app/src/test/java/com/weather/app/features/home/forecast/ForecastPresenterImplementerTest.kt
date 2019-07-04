@@ -1,4 +1,4 @@
-package com.weather.app.features.forecast
+package com.weather.app.features.home.forecast
 
 import com.nhaarman.mockitokotlin2.atLeast
 import com.nhaarman.mockitokotlin2.doReturn

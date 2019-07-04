@@ -1,4 +1,4 @@
-package com.weather.app.features.forecast
+package com.weather.app.features.home.forecast
 
 import android.arch.lifecycle.DefaultLifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
@@ -56,7 +56,7 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
     }
 
     override fun drawForecastList(forecastList: List<Forecast>) {
-
+        //TODO: create a list for forecasts
         val builder = StringBuilder()
         forecastList.forEach { builder.append("\n\n\n$it") }
         forecastTxt.text = builder.toString()
@@ -65,7 +65,7 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
 
     override fun drawErrorImage() {
         favoriteFloatingBtn.hide()
-        errorImage.visibility = View.VISIBLE
+        errorImage.visibility = VISIBLE
     }
 
     override fun stopLoading() {
