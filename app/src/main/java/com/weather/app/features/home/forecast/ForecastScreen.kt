@@ -57,6 +57,7 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
 
     override fun drawForecastList(forecastList: List<Forecast>) {
         //TODO: create a list for forecasts
+        favoriteFloatingBtn.show()
         val builder = StringBuilder()
         forecastList.forEach { builder.append("\n\n\n$it") }
         forecastTxt.text = builder.toString()
@@ -70,7 +71,6 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
 
     override fun stopLoading() {
         forecastTxt.visibility = VISIBLE
-        favoriteFloatingBtn.show()
         forecastLoading.visibility = GONE
     }
 

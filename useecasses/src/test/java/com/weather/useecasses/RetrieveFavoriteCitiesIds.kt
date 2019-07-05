@@ -1,8 +1,8 @@
 package com.weather.useecasses
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
+import com.weather.entties.City
 import com.weather.entties.EmptyFavoritesCitiesException
-import com.weather.entties.FavoriteCityId
 import com.weather.useecasses.engine.toMutableLiveData
 import org.junit.Assert
 import org.junit.Rule
@@ -18,16 +18,16 @@ class RetrieveFavoriteCitiesIdsTest {
 
     // if is retrieving, then do not trigger action
     @Test
-    fun `retrieveFavoriteCitiesIds with retrieving is true then do nothing`() {
+    fun `retrieveFavoriteCities with retrieving is true then do nothing`() {
         //Arrange
         val retrieving = true.toMutableLiveData()
-        val result = listOf<FavoriteCityId>().toMutableLiveData()
+        val result = listOf<City>().toMutableLiveData()
         val repositoryMock = RepositoryMock()
 
-        val retrieveFavoriteCitiesIds = RetrieveFavoriteCitiesIds(retrieving, repositoryMock)
+        val retrieveFavoriteCities = RetrieveFavoriteCities(retrieving, repositoryMock)
 
         //Act
-        retrieveFavoriteCitiesIds(result)
+        retrieveFavoriteCities(result)
         //Assert
         Assert.assertTrue(result.value!!.isEmpty())
 
@@ -36,27 +36,27 @@ class RetrieveFavoriteCitiesIdsTest {
 
     // if favorites is empty, throw an exception
     @Test(expected = EmptyFavoritesCitiesException::class)
-    fun `retrieveFavoriteCitiesIds with empty ids then throw an exception`() {
+    fun `retrieveFavoriteCities with empty ids then throw an exception`() {
         //Arrange
         val retrieving = false.toMutableLiveData()
-        val result = listOf<FavoriteCityId>().toMutableLiveData()
+        val result = listOf<City>().toMutableLiveData()
         val repositoryMock = RepositoryMock()
         repositoryMock.favoriteCityIdsDataSource.clear()
 
-        val retrieveFavoriteCitiesIds = RetrieveFavoriteCitiesIds(retrieving, repositoryMock)
+        val retrieveFavoriteCities = RetrieveFavoriteCities(retrieving, repositoryMock)
         //Act
-        retrieveFavoriteCitiesIds(result)
+        retrieveFavoriteCities(result)
 
     }
 
     //retrieve favorite cities ids (longs)
     @Test
-    fun `retrieveFavoriteCitiesIds with retrieving is false then return ids `() {
+    fun `retrieveFavoriteCities with retrieving is false then return ids `() {
         val retrieving = false.toMutableLiveData()
-        val result = listOf<FavoriteCityId>().toMutableLiveData()
+        val result = listOf<City>().toMutableLiveData()
         val repositoryMock = RepositoryMock()
 
-        val retrieveFavoriteCitiesIds = RetrieveFavoriteCitiesIds(retrieving, repositoryMock)
+        val retrieveFavoriteCitiesIds = RetrieveFavoriteCities(retrieving, repositoryMock)
 
         //Act
         retrieveFavoriteCitiesIds(result)

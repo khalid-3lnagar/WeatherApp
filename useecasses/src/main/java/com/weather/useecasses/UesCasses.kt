@@ -41,16 +41,18 @@ class RetrieveCityByName(
 
 }
 
-class RetrieveFavoriteCitiesIds(
+class RetrieveFavoriteCities(
     private val retrieving: MutableLiveData<Boolean>,
-    private val repository: CitiesRepository
+    private val repository: CitiesRepository = CitiesRepositoryImplementer()
 ) {
-    operator fun invoke(result: MutableLiveData<List<FavoriteCityId>>) {
+    operator fun invoke(result: CitiesResult) {
         retrieving
             .takeUnless { it.value ?: false }
             ?.also { it.postValue(true) }
             ?.let { repository.retrieveFavoritesCitiesIds() }
             ?.ifEmpty { throw EmptyFavoritesCitiesException() }
+            ?.map { it.id }
+            ?.let { repository.retrieveCitiesByIds(it) }
             ?.also { result.postValue(it) }
             ?.also { retrieving.postValue(false) }
 
