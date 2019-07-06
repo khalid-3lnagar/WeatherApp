@@ -30,16 +30,15 @@ class FavoritesViewModelTest {
         val mockResult = arrayListOf<City>(mock { })
 
         val retrieveCitiesByIds = mock<RetrieveFavoriteCities> {
-            on { invoke(favoritesResult) } doAnswer { favoritesResult.postValue(mockResult) }
+            on { invoke() } doAnswer { favoritesResult.postValue(mockResult) }
         }
         val viewModelTest = FavoritesViewModel(
             retrieving,
-            favoritesResult = favoritesResult,
             schedulerIo = testScheduler, mainScheduler = testScheduler,
-            retrieveCitiesByIds = retrieveCitiesByIds
+            retrieveFavoriteCities = retrieveCitiesByIds
         )
         //Act
-        viewModelTest.onRetrievingFavorites()
+        viewModelTest.onRetrievingFavoritesIds()
 
         //Assert
         Assert.assertTrue(favoritesResult.value.isNullOrEmpty())
@@ -55,12 +54,11 @@ class FavoritesViewModelTest {
         val retrieveCitiesByIds = mock<RetrieveFavoriteCities> {}
         val viewModelTest = FavoritesViewModel(
             retrieving,
-            favoritesResult = favoritesResult,
             schedulerIo = testScheduler, mainScheduler = testScheduler,
-            retrieveCitiesByIds = retrieveCitiesByIds
+            retrieveFavoriteCities = retrieveCitiesByIds
         )
         //Act
-        viewModelTest.onRetrievingFavorites()
+        viewModelTest.onRetrievingFavoritesIds()
 
         //Assert
         Assert.assertTrue(favoritesResult.value?.isEmpty() ?: false)
@@ -68,53 +66,4 @@ class FavoritesViewModelTest {
     }
 
 
-    @Test
-    fun `onRetrievingFavorites with successful response  then isFavoritesEmpty is false`() {
-        //Arrange
-        val retrieving: MutableLiveData<Boolean> = true.toMutableLiveData()
-        val isFavoritesEmpty: MutableLiveData<Boolean> = false.toMutableLiveData()
-        val favoritesResult: CitiesResult = ArrayList<City>().toMutableLiveData()
-        val testScheduler: Scheduler = TestScheduler()
-
-        val mockResult = arrayListOf<City>(mock { })
-
-        val retrieveCitiesByIds = mock<RetrieveFavoriteCities> {
-            on { invoke(favoritesResult) } doAnswer { favoritesResult.postValue(mockResult) }
-        }
-
-        val viewModelTest = FavoritesViewModel(
-            retrieving, isFavoritesEmpty,
-            favoritesResult = favoritesResult,
-            schedulerIo = testScheduler, mainScheduler = testScheduler,
-            retrieveCitiesByIds = retrieveCitiesByIds
-        )
-        //Act
-        viewModelTest.onRetrievingFavorites()
-
-        //Assert
-        Assert.assertFalse(viewModelTest.isFavoritesEmpty.value ?: true)
-
-    }
-
-
-    @Test
-    fun `onRetrievingFavorites with exception  then isFavoritesEmpty is true`() {
-        //Arrange
-        val retrieving: MutableLiveData<Boolean> = false.toMutableLiveData()
-        val favoritesResult: CitiesResult = ArrayList<City>().toMutableLiveData()
-        val testScheduler: Scheduler = TestScheduler()
-        val retrieveCitiesByIds = mock<RetrieveFavoriteCities> {}
-        val viewModelTest = FavoritesViewModel(
-            retrieving,
-            favoritesResult = favoritesResult,
-            schedulerIo = testScheduler, mainScheduler = testScheduler,
-            retrieveCitiesByIds = retrieveCitiesByIds
-        )
-        //Act
-        viewModelTest.onRetrievingFavorites()
-
-        //Assert
-        Assert.assertTrue(viewModelTest.isFavoritesEmpty.value ?: false)
-
-    }
 }

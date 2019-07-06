@@ -67,19 +67,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/favoriteFloatingBtn"
+        android:id="@+id/fab_favorite_forecast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:focusable="true"
-        android:visibility="invisible"
-        android:scaleType="centerCrop"
+        android:src="@drawable/ic_not_favorite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:maxImageSize="40dp"
-        app:srcCompat="@drawable/ic_not_favorite" />
+        app:maxImageSize="40dp" />
 
 
 </android.support.constraint.ConstraintLayout>

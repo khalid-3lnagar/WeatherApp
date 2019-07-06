@@ -24,10 +24,10 @@ class RetrieveFavoriteCitiesIdsTest {
         val result = listOf<City>().toMutableLiveData()
         val repositoryMock = RepositoryMock()
 
-        val retrieveFavoriteCities = RetrieveFavoriteCities(retrieving, repositoryMock)
+        val retrieveFavoriteCities = RetrieveFavoriteCities(retrieving, result, repositoryMock)
 
         //Act
-        retrieveFavoriteCities(result)
+        retrieveFavoriteCities()
         //Assert
         Assert.assertTrue(result.value!!.isEmpty())
 
@@ -43,9 +43,9 @@ class RetrieveFavoriteCitiesIdsTest {
         val repositoryMock = RepositoryMock()
         repositoryMock.favoriteCityIdsDataSource.clear()
 
-        val retrieveFavoriteCities = RetrieveFavoriteCities(retrieving, repositoryMock)
+        val retrieveFavoriteCities = RetrieveFavoriteCities(retrieving, result, repositoryMock)
         //Act
-        retrieveFavoriteCities(result)
+        retrieveFavoriteCities()
 
     }
 
@@ -56,10 +56,9 @@ class RetrieveFavoriteCitiesIdsTest {
         val result = listOf<City>().toMutableLiveData()
         val repositoryMock = RepositoryMock()
 
-        val retrieveFavoriteCitiesIds = RetrieveFavoriteCities(retrieving, repositoryMock)
-
+        val retrieveFavoriteCitiesIds = RetrieveFavoriteCities(retrieving, result, repositoryMock)
         //Act
-        retrieveFavoriteCitiesIds(result)
+        retrieveFavoriteCitiesIds()
         //Assert
         Assert.assertTrue(result.value!!.isNotEmpty())
 

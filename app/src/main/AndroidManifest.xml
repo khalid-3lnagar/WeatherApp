@@ -16,9 +16,7 @@
         <activity
             android:name="com.weather.app.features.home.favorites.FavoritesActivity"
             android:parentActivityName=".features.home.HomeActivity" />
-        <activity
-            android:name="com.weather.app.features.home.forecast.ForecastActivity"
-            android:parentActivityName=".features.home.HomeActivity" />
+        <activity android:name="com.weather.app.features.home.forecast.ForecastActivity" />
         <activity android:name=".features.home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

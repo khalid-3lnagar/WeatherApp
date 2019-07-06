@@ -2,16 +2,15 @@ package com.weather.app.features.home
 
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
-import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.weather.app.R
+import com.weather.app.sendShowCityBroadcast
 import com.weather.entties.City
 import com.weather.useecasses.CitiesResult
 import kotlinx.android.synthetic.main.item_city.view.*
-import java.io.Serializable
 
 const val BROADCAST_ACTION_SHOW_CITY = "BROADCAST_ACTION_SHOW_CITY"
 const val INTENT_EXTRA_CITY = "INTENT_EXTRA_CITY"
@@ -49,13 +48,8 @@ class CityViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             view.txt_city_latitude.text = coordinates?.latitude.toString()
             view.txt_city_longitude.text = coordinates?.longitude.toString()
         }
-        view.btn_show_city.setOnClickListener { sendShowCityBroadcast(city) }
+        view.btn_show_city.setOnClickListener { sendShowCityBroadcast(city, view) }
 
     }
 
-    private fun sendShowCityBroadcast(city: City) {
-        Intent(BROADCAST_ACTION_SHOW_CITY)
-            .putExtra(INTENT_EXTRA_CITY, city as Serializable)
-            .also { view.context.sendBroadcast(it) }
-    }
 }

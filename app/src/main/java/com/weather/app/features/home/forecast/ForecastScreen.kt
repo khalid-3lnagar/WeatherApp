@@ -32,7 +32,7 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
         lifecycle.addObserver(presenter)
         presenter.initializeCity(getCity()!!)
         errorImage.setOnClickListener { finish() }
-        favoriteFloatingBtn.setOnClickListener { onFavoriteBtnClicked(it) }
+        fab_favorite_forecast.setOnClickListener { onFavoriteBtnClicked(it) }
     }
 
     private fun onFavoriteBtnClicked(it: View) {
@@ -51,13 +51,13 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
 
     override fun startLoading() {
         forecastTxt.visibility = GONE
-        favoriteFloatingBtn.hide()
+        fab_favorite_forecast.hide()
         forecastLoading.visibility = VISIBLE
     }
 
     override fun drawForecastList(forecastList: List<Forecast>) {
         //TODO: create a list for forecasts
-        favoriteFloatingBtn.show()
+        fab_favorite_forecast.show()
         val builder = StringBuilder()
         forecastList.forEach { builder.append("\n\n\n$it") }
         forecastTxt.text = builder.toString()
@@ -65,7 +65,7 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
     }
 
     override fun drawErrorImage() {
-        favoriteFloatingBtn.hide()
+        fab_favorite_forecast.hide()
         errorImage.visibility = VISIBLE
     }
 
@@ -75,15 +75,17 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
     }
 
     override fun drawAsFavoriteCity() {
-        with(favoriteFloatingBtn) {
-            setImageResource(R.drawable.ic_favorite)
+        with(fab_favorite_forecast) {
+            setImageResource((R.drawable.ic_favorite))
             isSelected = true
+
         }
+
 
     }
 
     override fun drawAsNotFavoriteCity() {
-        with(favoriteFloatingBtn) {
+        with(fab_favorite_forecast) {
             setImageResource(R.drawable.ic_not_favorite)
             isSelected = false
         }

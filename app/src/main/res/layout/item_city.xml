@@ -61,23 +61,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/show_city"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fab_item_favorite"
             app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_item_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:clickable="true"
             android:focusable="true"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/btn_show_city"
-            app:layout_constraintEnd_toEndOf="@+id/btn_show_city"
-            app:layout_constraintStart_toStartOf="@+id/btn_show_city"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btn_show_city"
-            app:srcCompat="@drawable/ic_not_favorite" />
+            app:maxImageSize="40dp"
+            app:srcCompat="@drawable/ic_favorite" />
 
         <FrameLayout
             android:id="@+id/coordinates"
@@ -85,11 +88,11 @@
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="35dp"
+
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/txt_city_country"
+            app:layout_constraintEnd_toStartOf="@+id/btn_show_city"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.63">

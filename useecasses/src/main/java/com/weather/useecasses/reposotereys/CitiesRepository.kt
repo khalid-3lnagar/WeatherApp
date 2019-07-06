@@ -28,8 +28,8 @@ interface CitiesRepository {
 
     fun retrieveCitiesByName(name: String): List<City>
 
-    fun retrieveCitiesByIds(cityIds: List<Long>): List<City>
-
     fun retrieveFavoritesCitiesIds(): List<FavoriteCityId>
+
+    fun retrieveCitiesByIds(cityIds: List<Long>): List<City>
 
 }
