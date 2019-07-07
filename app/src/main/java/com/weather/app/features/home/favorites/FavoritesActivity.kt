@@ -2,17 +2,18 @@ package com.weather.app.features.home.favorites
 
 import android.arch.lifecycle.*
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import com.weather.app.R
 import com.weather.app.sendShowCityBroadcast
 import com.weather.entties.City
+import com.weather.useecasses.AddFavoriteCityById
 import com.weather.useecasses.CitiesResult
 import com.weather.useecasses.RemoveCityFromFavoritesById
 import com.weather.useecasses.RetrieveFavoriteCities
@@ -35,7 +36,13 @@ class FavoritesActivity : AppCompatActivity() {
 
     private val onItemClickListener = object : FavoritesAdapter.OnItemClickListener {
         override fun onClick(cityId: Long) {
-            viewModel.removeCityFromFavorites(cityId)
+            Snackbar.make(
+                rv_favorites,
+                "You Just Removed City From Favorites",
+                Snackbar.LENGTH_INDEFINITE
+            ).also { viewModel.removeCityFromFavorites(cityId, it) }
+
+
         }
     }
 
@@ -98,6 +105,7 @@ class FavoritesViewModel(
     private val schedulerIo: Scheduler = Schedulers.io(),
     private val mainScheduler: Scheduler = AndroidSchedulers.mainThread(),
     private val disposables: CompositeDisposable = CompositeDisposable(),
+    private val addFavoriteCityById: AddFavoriteCityById = AddFavoriteCityById(),
     private val removeCityFromFavoritesById: RemoveCityFromFavoritesById = RemoveCityFromFavoritesById(),
     private val retrieveFavoriteCities: RetrieveFavoriteCities = RetrieveFavoriteCities(retrieving, favoritesCities)
 ) : ViewModel() {
@@ -121,14 +129,33 @@ class FavoritesViewModel(
         disposables.dispose()
     }
 
-    fun removeCityFromFavorites(cityId: Long) {
+    fun removeCityFromFavorites(cityId: Long, snackbar: Snackbar) {
         Completable.fromCallable { removeCityFromFavoritesById(cityId) }
             .observeOn(mainScheduler)
             .subscribeOn(schedulerIo)
+            .subscribe { onSuccess(snackbar, cityId) }
+            .also { disposables.add(it) }
+
+    }
+
+    private fun onSuccess(snackbar: Snackbar, cityId: Long) {
+        snackbar
+            .setAction(R.string.undo_string) { addCityToFavorites(cityId) }
+            .show()
+        onRetrievingFavoritesIds()
+    }
+
+    private fun addCityToFavorites(id: Long) {
+
+        Completable.fromCallable { addFavoriteCityById(id) }
+            .subscribeOn(schedulerIo)
+            .observeOn(mainScheduler)
             .subscribe { onRetrievingFavoritesIds() }
             .also { disposables.add(it) }
 
     }
+
+
 }
 //endregion
 
@@ -141,7 +168,9 @@ class FavoritesAdapter(
     RecyclerView.Adapter<FavoritesAdapter.FavoriteCityViewHolder>() {
 
     init {
-        cities.observe(lifecycleOwner, Observer { notifyDataSetChanged() })
+        cities.observe(lifecycleOwner, Observer {
+            notifyDataSetChanged()
+        })
 
     }
 
@@ -177,6 +206,7 @@ class FavoritesAdapter(
             view.btn_show_city.setOnClickListener { sendShowCityBroadcast(city, view) }
             view.fab_item_favorite.show()
             view.fab_item_favorite.setOnClickListener {
+                view.visibility = GONE
                 onClickListener.onClick(city.id)
             }
         }

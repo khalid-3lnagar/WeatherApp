@@ -49,8 +49,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.16"
+            app:layout_constraintEnd_toStartOf="@+id/btn_show_city"
             app:layout_constraintStart_toEndOf="@+id/txt_city_name"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/country" />
@@ -66,21 +65,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fab_item_favorite"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_item_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_show_city"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btn_show_city"
-            app:maxImageSize="40dp"
-            app:srcCompat="@drawable/ic_favorite" />
 
         <FrameLayout
             android:id="@+id/coordinates"
@@ -116,7 +100,7 @@
                     android:layout_height="wrap_content"
 
                     android:layout_marginTop="8dp"
-                    android:text="@string/longitude"
+                    android:text="@string/latitude"
                     android:textColor="#000"
                     app:layout_constraintEnd_toEndOf="@+id/txt_city_longitude_2"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -127,7 +111,7 @@
                     android:id="@+id/txt_city_longitude"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
+                    android:layout_marginStart="8dp"
                     android:text="@string/longitude"
                     app:layout_constraintStart_toEndOf="@+id/txt_city_longitude_2"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -142,6 +126,21 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>
         </FrameLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_item_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_show_city"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_show_city"
+            app:maxImageSize="40dp"
+            app:srcCompat="@drawable/ic_favorite" />
 
 
     </android.support.constraint.ConstraintLayout>

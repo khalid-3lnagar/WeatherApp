@@ -14,5 +14,6 @@
     <string name="favorite">Favorite</string>
     <string name="error_image">Error Image</string>
     <string name="empty_list_msg">No Favorites \n\n Add some</string>
+    <string name="undo_string">undo</string>
 
 </resources>
