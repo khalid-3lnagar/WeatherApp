@@ -15,5 +15,11 @@
     <string name="error_image">Error Image</string>
     <string name="empty_list_msg">No Favorites \n\n Add some</string>
     <string name="undo_string">undo</string>
+    <string name="cloudiness">Cloudiness :</string>
+    <string name="degree">Degree :</string>
+    <string name="speed">Speed :</string>
+    <string name="temperature">Temperature :</string>
+    <string name="min_tmp">Min Tmp :</string>
+    <string name="max_tmp">Max Tmp :</string>
 
 </resources>

@@ -64,7 +64,6 @@ class FavoritesActivity : AppCompatActivity() {
 
         } else {
             txt_empty_msg.visibility = INVISIBLE
-
             FavoritesAdapter(viewModel.favoritesCities, this, onItemClickListener)
                 .also { rv_favorites.layoutManager = LinearLayoutManager(this) }
                 .also { rv_favorites.adapter = it }
