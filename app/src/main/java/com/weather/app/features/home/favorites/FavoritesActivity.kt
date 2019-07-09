@@ -33,7 +33,7 @@ class FavoritesActivity : AppCompatActivity() {
     private val viewModel by lazy { ViewModelProviders.of(this).get(FavoritesViewModel::class.java) }
 
     private val disposables by lazy { CompositeDisposable() }
-
+    private val favoritesAdapter by lazy { FavoritesAdapter(viewModel.favoritesCities, this, onItemClickListener) }
     private val onItemClickListener = object : FavoritesAdapter.OnItemClickListener {
         override fun onClick(cityId: Long) {
             Snackbar.make(
@@ -50,23 +50,37 @@ class FavoritesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorites)
 
-        viewModel.apply {
-            retrieving.observe(this@FavoritesActivity, Observer { initRetrieving(it) })
-            onRetrievingFavoritesIds()
-            viewModel.favoritesCities.observe(this@FavoritesActivity, Observer { showListOfFavoriteCities() })
-        }
+        initModel()
+        initRecyclerView()
 
     }
 
-    private fun showListOfFavoriteCities() {
-        if (viewModel.favoritesCities.value.isNullOrEmpty()) {
-            txt_empty_msg.visibility = VISIBLE
+    private fun initModel() {
+        viewModel.apply {
+            retrieving.observe(this@FavoritesActivity, Observer { initRetrieving(it) })
+            onRetrievingFavoritesIds()
+            favoritesCities.observe(this@FavoritesActivity, Observer { showListOfFavoriteCities(it) })
+        }
+    }
 
+    private fun initRecyclerView() {
+        with(rv_favorites) {
+            layoutManager = LinearLayoutManager(this@FavoritesActivity)
+            adapter = favoritesAdapter
+        }
+    }
+
+    private fun showListOfFavoriteCities(cities: List<City>?) {
+        if (cities.isNullOrEmpty()) {
+            txt_empty_msg.visibility = VISIBLE
+            rv_favorites.visibility = INVISIBLE
         } else {
             txt_empty_msg.visibility = INVISIBLE
-            FavoritesAdapter(viewModel.favoritesCities, this, onItemClickListener)
-                .also { rv_favorites.layoutManager = LinearLayoutManager(this) }
-                .also { rv_favorites.adapter = it }
+            rv_favorites.visibility = VISIBLE
+            favoritesAdapter.notifyDataSetChanged()
+            rv_favorites.adapter = favoritesAdapter
+
+
         }
 
     }

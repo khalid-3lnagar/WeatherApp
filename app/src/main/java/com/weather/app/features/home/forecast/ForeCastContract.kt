@@ -16,7 +16,7 @@ interface ForecastView {
     fun setCityTitle(cityName: String)
     fun startLoading()
     fun stopLoading()
-    fun drawForecastList(forecastList: List<Forecast>)
+    fun drawForecastList(forecastList: List<Forecast>?)
     fun drawErrorImage()
     fun drawAsFavoriteCity()
     fun drawAsNotFavoriteCity()
