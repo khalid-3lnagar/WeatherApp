@@ -21,5 +21,6 @@
     <string name="temperature">Temperature :</string>
     <string name="min_tmp">Min Tmp :</string>
     <string name="max_tmp">Max Tmp :</string>
+    <string name="wind">Wind</string>
 
 </resources>

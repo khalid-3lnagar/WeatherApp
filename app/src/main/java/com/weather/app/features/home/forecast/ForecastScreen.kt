@@ -4,9 +4,12 @@ import android.arch.lifecycle.DefaultLifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
+import android.view.ViewGroup
 import com.weather.app.R
 import com.weather.app.features.home.INTENT_EXTRA_CITY
 import com.weather.entties.City
@@ -22,10 +25,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_forecast.*
+import kotlinx.android.synthetic.main.item_forecast.view.*
 
+
+//region View
 class ForecastActivity : AppCompatActivity(), ForecastView {
 
     private val presenter by lazy { ForecastPresenterImplementer(this) }
+    private val forecastAdapter by lazy { ForecastAdapter() }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forecast)
@@ -33,6 +40,16 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
         presenter.initializeCity(getCity()!!)
         errorImage.setOnClickListener { finish() }
         fab_favorite_forecast.setOnClickListener { onFavoriteBtnClicked(it) }
+
+        initRecyclerView()
+
+    }
+
+    private fun initRecyclerView() {
+        with(rv_forecast) {
+            layoutManager = LinearLayoutManager(this@ForecastActivity)
+            adapter = forecastAdapter
+        }
     }
 
     private fun onFavoriteBtnClicked(it: View) {
@@ -50,17 +67,23 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
     }
 
     override fun startLoading() {
-        forecastTxt.visibility = GONE
+        rv_forecast.visibility = INVISIBLE
         fab_favorite_forecast.hide()
         forecastLoading.visibility = VISIBLE
     }
 
-    override fun drawForecastList(forecastList: List<Forecast>) {
-        //TODO: create a list for forecasts
+    override fun drawForecastList(forecastList: List<Forecast>?) {
+
+        with(rv_forecast) {
+            forecastList.takeUnless { it.isNullOrEmpty() }
+                ?.let { forecastAdapter }
+                ?.also { it.forecasts.clear() }
+                ?.also { it.forecasts.addAll(forecastList!!) }
+                ?.apply { notifyDataSetChanged() }
+                ?.also { adapter = it } ?: drawErrorImage()
+            visibility = VISIBLE
+        }
         fab_favorite_forecast.show()
-        val builder = StringBuilder()
-        forecastList.forEach { builder.append("\n\n\n$it") }
-        forecastTxt.text = builder.toString()
 
     }
 
@@ -70,7 +93,7 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
     }
 
     override fun stopLoading() {
-        forecastTxt.visibility = VISIBLE
+        //   forecastTxt.visibility = VISIBLE
         forecastLoading.visibility = GONE
     }
 
@@ -93,7 +116,33 @@ class ForecastActivity : AppCompatActivity(), ForecastView {
 
 }
 
+//endregion
 
+//region Contract
+
+//View  > Presenter > Model
+interface ForecastPresenter {
+    fun initializeCity(city: City)
+    fun addCityToFavorites()
+    fun removeCityFromFavorites()
+
+
+}
+
+interface ForecastView {
+    fun setCityTitle(cityName: String)
+    fun startLoading()
+    fun stopLoading()
+    fun drawForecastList(forecastList: List<Forecast>?)
+    fun drawErrorImage()
+    fun drawAsFavoriteCity()
+    fun drawAsNotFavoriteCity()
+
+
+}
+//endregion
+
+//region Presenter
 class ForecastPresenterImplementer(
     private val view: ForecastView,
     private val retrieveForecastById: RetrieveForecastById = RetrieveForecastById(),
@@ -135,7 +184,7 @@ class ForecastPresenterImplementer(
             .observeOn(mainScheduler)
             .map { it.forecasts }
             .doFinally { view.stopLoading() }
-            .subscribe({ view.drawForecastList(it!!) }, { view.drawErrorImage() })
+            .subscribe({ view.drawForecastList(it) }, { view.drawErrorImage() })
             .also { disposables.add(it) }
     }
 
@@ -160,5 +209,54 @@ class ForecastPresenterImplementer(
         disposables.dispose()
     }
 }
+//endregion
+
+//region ForecastAdapter
+class ForecastAdapter(
+    val forecasts: MutableList<Forecast> = mutableListOf()
+) :
+    RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
 
 
+    override fun onCreateViewHolder(viewGroup: ViewGroup, posstion: Int): ForecastViewHolder =
+        LayoutInflater.from(viewGroup.context)
+            .inflate(R.layout.item_forecast, viewGroup, false)
+            .let { ForecastViewHolder(it) }
+
+
+    override fun getItemCount(): Int = forecasts.size
+
+    override fun onBindViewHolder(viewHolder: ForecastViewHolder, posstion: Int) {
+        forecasts[posstion]
+            .also { viewHolder.bind(it) }
+
+    }
+
+    class ForecastViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+        fun bind(forecast: Forecast) {
+            with(view) {
+                forecast.dateText
+                    ?.split(" ")
+                    ?.also { txt_date.text = it[0] }
+                    ?.also { txt_time.text = buildTimeString(it[1]) }
+
+                txt_cloudiness.text = forecast.clouds?.cloudiness.toString()
+                txt_temperature.text = forecast.details?.temperature.toString()
+
+                txt_Speed.text = forecast.wind?.speed.toString()
+                txt_degree.text = forecast.wind?.degree.toString()
+            }
+
+        }
+
+
+        private fun buildTimeString(time: String) = time
+            .split(":")
+            .let { "${it[0]}:${it[1]}" }
+
+
+    }
+}
+
+
+//endregion
